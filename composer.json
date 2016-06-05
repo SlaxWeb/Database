@@ -1,0 +1,34 @@
+{
+    "name": "slaxweb/database",
+    "description": "Main Database Component for SlaxWeb Framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomaz Lovrec",
+            "email": "tomaz.lovrec@gmail.com"
+        }
+    ],
+    "require": {
+        "php":  ">=7.0.0",
+        "slaxweb/logger": "dev-develop",
+        "slaxweb/config": "dev-develop"
+    },
+    "require-dev": {
+        "codeception/codeception": "~2.2",
+        "codeception/specify": "*",
+        "behat/gherkin": "~4.4",
+        "phpunit/phpunit": "~5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "SlaxWeb\\Database\\": "src/",
+            "SlaxWeb\\Database\\Test\\Unit\\": "tests/unit/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "0.4.x-dev"
+        }
+    },
+    "minimum-stability": "dev"
+}

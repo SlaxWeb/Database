@@ -1,0 +1,16 @@
+{
+    "name": "database",
+    "description": "Main Database Component for SlaxWeb Framework",
+    "type": "main",
+    "providers": {
+        "app": [],
+        "commands": [],
+        "hooks": []
+    },
+    "configFiles": [],
+    "subcomponents": {
+        "list": {},
+        "required": true,
+        "multi": false
+    }
+}
