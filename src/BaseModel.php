@@ -18,6 +18,7 @@ namespace SlaxWeb\Database;
 
 use ICanBoogie\Inflector;
 use Psr\Log\LoggerInterface as Logger;
+use SlaxWeb\Config\Container as Config;
 use SlaxWeb\Database\LibraryInterface as Database;
 
 abstract class BaseModel
@@ -35,6 +36,13 @@ abstract class BaseModel
      * @var \Psr\Log\LoggerInterface
      */
     protected $_logger = null;
+
+    /**
+     * Config object
+     *
+     * @var \SlaxWeb\Config\Container
+     */
+    protected $_config = null;
 
     /**
      * Inflector object
@@ -56,13 +64,15 @@ abstract class BaseModel
      * Initialize the Base Model, by storging injected dependencies into class properties.
      *
      * @param \Psr\Log\LoggerInterface $logger PSR-7 compliant logger object
+     * @param \SlaxWeb\Config\Container $config Configuration container object
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
      * @param \SlaxWeb\Database\LibraryInterface $db Database library object
      * @return void
      */
-    public function __construct(Logger $logger, Inflector $inflector, Database $db)
+    public function __construct(Logger $logger, Config $config, Inflector $inflector, Database $db)
     {
         $this->_logger = $logger;
+        $this->_config = $config;
         $this->_inflector = $inflector;
         $this->_db = $db;
 
