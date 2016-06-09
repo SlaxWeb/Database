@@ -92,6 +92,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $model = $this->getMockBuilder(BaseModel::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
+            ->setMockClassName("TestTable")
             ->getMock();
 
         $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);

@@ -24,6 +24,15 @@ use SlaxWeb\Database\LibraryInterface as Database;
 abstract class BaseModel
 {
     /**
+     * Table name style
+     */
+    const TBL_NAME_CAMEL_UCFIRST = 1;
+    const TBL_NAME_CAMEL_LCFIRST = 2;
+    const TBL_NAME_UNDERSCORE = 3;
+    const TBL_NAME_UPPERCASE = 4;
+    const TBL_NAME_LOWERCASE = 5;
+
+    /**
      * Table name
      *
      * @var string
@@ -76,6 +85,51 @@ abstract class BaseModel
         $this->_inflector = $inflector;
         $this->_db = $db;
 
+        if ($this->table === "" && $this->_config["database.autoTable"]) {
+            $this->_setTable();
+        }
+
         $this->_logger->info("Model initialized successfuly", ["model" => get_class($this)]);
+    }
+
+    /**
+     * Set table name
+     *
+     * Sets the table name based on the model class name. It discards the whole
+     * namespace, and uses only the class name. The class name is pluralized, if
+     * defined so by the 'pluralizeTableName' configuration option. It will also
+     * transform the name into the right format, based on the 'tableNameStyle' configuration
+     * option.
+     *
+     * @return void
+     */
+    protected function _setTable()
+    {
+        $this->table = get_class($this);
+        if (($pos = strrpos($this->table, "\\")) !== false) {
+            $this->table = substr($this->table, $pos);
+        }
+
+        if ($this->_config["database.pluralizeTableName"]) {
+            $this->table = $this->_inflector->pluralize($this->table);
+        }
+
+        switch ($this->_config["database.tableNameStyle"]) {
+            case self::TBL_NAME_CAMEL_UCFIRST:
+                $this->table = $this->_inflector->camelize($this->table, Inflector::UPCASE_FIRST_LETTER);
+                break;
+            case self::TBL_NAME_CAMEL_LCFIRST:
+                $this->table = $this->_inflector->camelize($this->table, Inflector::DOWNCASE_FIRST_LETTER);
+                break;
+            case self::TBL_NAME_UNDERSCORE:
+                $this->table = $this->_inflector->underscore($this->table);
+                break;
+            case self::TBL_NAME_UPPERCASE:
+                $this->table = strtoupper($this->table);
+                break;
+            case self::TBL_NAME_LOWERCASE:
+                $this->table = strtolower($this->table);
+                break;
+        }
     }
 }
