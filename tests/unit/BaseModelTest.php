@@ -164,48 +164,31 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->with("Test")
             ->willReturn("test");
 
-        // Table name already set
+        $expectations = [
+            // Table name already set
+            "PreSetTable",
+            // Config denies table setting
+            "",
+            // Table name set
+            "Test",
+            // Table name pluralized
+            "Tests",
+            // Table name camelized, ucfirst
+            "Test",
+            // Table name camelized, lcfirst
+            "test",
+            // Table name underscore
+            "test",
+            // Table name uppercase 
+            "TEST",
+            // Table name lowercase
+            "test"
+        ];
         $model->table = "PreSetTable";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("PreSetTable", $model->table);
-
-        // Config denies table setting
-        $model->table = "";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("", $model->table);
-
-        // Table name set
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("Test", $model->table);
-
-        // Table name pluralized
-        $model->table = "";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("Tests", $model->table);
-
-        // Table name camelized, ucfirst
-        $model->table = "";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("Test", $model->table);
-
-        // Table name camelized, lcfirst
-        $model->table = "";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("test", $model->table);
-
-        // Table name underscore
-        $model->table = "";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("test", $model->table);
-
-        // Table name uppercase 
-        $model->table = "";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("TEST", $model->table);
-
-        // Table name lowercase
-        $model->table = "";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
-        $this->assertEquals("test", $model->table);
+        foreach ($expectations as $exp) {
+            $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
+            $this->assertEquals($exp, $model->table);
+            $model->table = "";
+        }
     }
 }
