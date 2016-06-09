@@ -33,6 +33,12 @@ abstract class BaseModel
     const TBL_NAME_LOWERCASE = 5;
 
     /**
+     * Callback invokation type
+     */
+    const CALLBACK_BEFORE = true;
+    const CALLBACK_AFTER = false;
+
+    /**
      * Table name
      *
      * @var string
@@ -68,6 +74,34 @@ abstract class BaseModel
     protected $_db = null;
 
     /**
+     * Callback definitions
+     *
+     * List of callbacks:
+     * - beforeInit
+     * - afterInit
+     * - beforeCreate
+     * - afterCreate
+     * - beforeRead
+     * - afterRead
+     * - beforeUpdate
+     * - afterUpdate
+     * - beforeDelete
+     * - afterDelete
+     *
+     * @var array<callable>
+     */
+    protected $_beforeInit = [];
+    protected $_afterInit = [];
+    protected $_beforeCreate = [];
+    protected $_afterCreate = [];
+    protected $_beforeRead = [];
+    protected $_afterRead = [];
+    protected $_beforeUpdate = [];
+    protected $_afterUpdate = [];
+    protected $_beforeDelete = [];
+    protected $_afterDelete = [];
+
+    /**
      * Class constructor
      *
      * Initialize the Base Model, by storging injected dependencies into class properties.
@@ -80,6 +114,8 @@ abstract class BaseModel
      */
     public function __construct(Logger $logger, Config $config, Inflector $inflector, Database $db)
     {
+        $this->_invokeCallback("init");
+
         $this->_logger = $logger;
         $this->_config = $config;
         $this->_inflector = $inflector;
@@ -90,6 +126,34 @@ abstract class BaseModel
         }
 
         $this->_logger->info("Model initialized successfuly", ["model" => get_class($this)]);
+
+        $this->_invokeCallback("init", self::CALLBACK_AFTER);
+    }
+
+    /**
+     * Invoke callback
+     *
+     * Invokes the the callback in the order that they are stored in the callback
+     * array for a passed in callback type. All additional parameters are sent to
+     * the invoked callback.
+     *
+     * @param string $name Name of the callback
+     * @param bool $before Invoke 'before' callables of '$name' callback, default self::CALLBACK_BEFORE
+     * @return void
+     */
+    protected function _invokeCallback(string $name, bool $before = self::CALLBACK_BEFORE)
+    {
+        $name = ($before ? "before" : "after") . ucfirst($name);
+        $property = "_{$name}";
+        if (isset($this->{$property}) === false || is_array($this->{$property}) === false) {
+            // @todo: throw exception
+            return;
+        }
+
+        $params = array_slice(func_get_args(), 2);
+        foreach ($this->{$property} as $callable) {
+            call_user_func_array($callable, $params);
+        }
     }
 
     /**
