@@ -152,7 +152,7 @@ abstract class BaseModel
 
         $params = array_slice(func_get_args(), 2);
         foreach ($this->{$property} as $callable) {
-            call_user_func_array($callable, $params);
+            $callable(...$params);
         }
     }
 
