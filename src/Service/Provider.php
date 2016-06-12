@@ -35,10 +35,10 @@ class Provider implements \Pimple\ServiceProviderInterface
                 $class = rtrim($container["config.service"]["database.classNamespace"], "\\")
                     . "\\"
                     . str_replace("/", "\\", $model);
-                $model = new $model(
+                $model = new $class(
                     $container["logger.service"](),
                     $container["config.service"],
-                    ICanBoogie\Inflector::get(),
+                    \ICanBoogie\Inflector::get(),
                     $container["databaseLibrary.service"]
                 );
 

@@ -196,7 +196,7 @@ abstract class BaseModel
     {
         $this->table = get_class($this);
         if (($pos = strrpos($this->table, "\\")) !== false) {
-            $this->table = substr($this->table, $pos);
+            $this->table = substr($this->table, $pos + 1);
         }
 
         if ($this->_config["database.pluralizeTableName"]) {
