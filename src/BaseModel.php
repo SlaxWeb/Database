@@ -74,6 +74,13 @@ abstract class BaseModel
     protected $_db = null;
 
     /**
+     * Last Query Error object
+     *
+     * @var \SlaxWeb\Database\Error
+     */
+    protected $_error = null;
+
+    /**
      * Callback definitions
      *
      * List of callbacks:
@@ -128,6 +135,24 @@ abstract class BaseModel
         $this->_logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
         $this->_invokeCallback("init", self::CALLBACK_AFTER);
+    }
+
+    /**
+     * Create record
+     *
+     * Creates a record row in the database with the supplied data and the help
+     * of the database library. It returns bool(true) on success, and bool(false)
+     * on failure.
+     *
+     * @param array $data Data for the create statement
+     * @return bool
+     */
+    public function create(array $data): bool
+    {
+        if (($status = $this->_db->insert($data)) === false) {
+            $this->_error = $this->_db->lastError();
+        }
+        return $status;
     }
 
     /**

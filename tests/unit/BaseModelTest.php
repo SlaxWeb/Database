@@ -78,7 +78,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $this->_db = $this->getMockBuilder(Database::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->setMethods(["insert", "lastError"])
             ->setMockClassName("DatabaseMock")
             ->getMockForAbstractClass();
     }
@@ -190,5 +190,36 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($exp, $model->table);
             $model->table = "";
         }
+    }
+
+    /**
+     * Test create method
+     *
+     * Create method must call 'insert' with unmodified input array, and call 'lastError'
+     * of the database library object if return value equals false.
+     *
+     * @return void
+     */
+    public function testCreate()
+    {
+        $row = ["foo" => "bar"];
+
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->setMockClassName("Test")
+            ->getMock();
+
+        $this->_db->expects($this->exactly(2))
+            ->method("insert")
+            ->with($row)
+            ->will($this->onConsecutiveCalls(true, false));
+
+        $this->_db->expects($this->once())
+            ->method("lastError");
+
+        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
+        $this->assertTrue($model->create($row));
+        $this->assertFalse($model->create($row));
     }
 }
