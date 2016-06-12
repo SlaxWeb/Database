@@ -30,7 +30,7 @@ class Provider implements \Pimple\ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $container["loadModel.service"] = $this->protect(
+        $container["loadModel.service"] = $container->protect(
             function (string $model) use ($container) {
                 $class = rtrim($container["config.service"]["database.classNamespace"], "\\")
                     . "\\"
