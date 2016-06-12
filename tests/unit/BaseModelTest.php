@@ -212,12 +212,13 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $this->_db->expects($this->exactly(2))
             ->method("insert")
-            ->with($row)
+            ->with("TestTable", $row)
             ->will($this->onConsecutiveCalls(true, false));
 
         $this->_db->expects($this->once())
             ->method("lastError");
 
+        $model->table = "TestTable";
         $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
         $this->assertTrue($model->create($row));
         $this->assertFalse($model->create($row));
