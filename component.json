@@ -3,7 +3,9 @@
     "description": "Main Database Component for SlaxWeb Framework",
     "type": "main",
     "providers": {
-        "app": [],
+        "app": [
+            "\\SlaxWeb\\Database\\Service\\Provider"
+        ],
         "commands": [],
         "hooks": []
     },
