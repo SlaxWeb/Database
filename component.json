@@ -11,7 +11,9 @@
         "database.php"
     ],
     "subcomponents": {
-        "list": {},
+        "list": {
+            "database-pdo": "dev-develop"
+        },
         "required": true,
         "multi": false
     }
