@@ -7,7 +7,9 @@
         "commands": [],
         "hooks": []
     },
-    "configFiles": [],
+    "configFiles": [
+        "database.php"
+    ],
     "subcomponents": {
         "list": {},
         "required": true,

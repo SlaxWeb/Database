@@ -20,6 +20,22 @@ use SlaxWeb\Database\Exception\NoErrorException;
 interface LibraryInterface
 {
     /**
+     * Available database drivers
+     */
+    const DB_CUBRID = "cubrid";
+    const DB_DBLIB = "dblib";
+    const DB_FIREBIRD = "firebird";
+    const DB_IBM = "ibm";
+    const DB_INFORMIX = "informix";
+    const DB_MYSQL = "mysql";
+    const DB_OCI = "oci";
+    const DB_ODBC = "odbc";
+    const DB_PGSQL = "pgsql";
+    const DB_SQLITE = "sqlite";
+    const DB_SQLSRV = "sqlsrv";
+    const DB_4D = "4d";
+
+    /**
      * Insert row
      *
      * Inserts a row into the database with the provided data. Returns bool(true)
