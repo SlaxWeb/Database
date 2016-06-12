@@ -12,6 +12,7 @@
         "php":  ">=7.0.0",
         "slaxweb/logger": "dev-develop",
         "slaxweb/config": "dev-develop",
+        "slaxbweb/getgset": "dev-develop",
         "icanboogie/inflector": "~1.4"
     },
     "require-dev": {
