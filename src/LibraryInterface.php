@@ -41,10 +41,11 @@ interface LibraryInterface
      * Inserts a row into the database with the provided data. Returns bool(true)
      * on success and bool(false) on failure.
      *
+     * @param string $table Table to which the data is to be inserted
      * @param array $data Data to be inserted
      * @return bool
      */
-    public function insert(array $data): bool;
+    public function insert(string $table, array $data): bool;
 
     /**
      * Get last error

@@ -149,7 +149,7 @@ abstract class BaseModel
      */
     public function create(array $data): bool
     {
-        if (($status = $this->_db->insert($data)) === false) {
+        if (($status = $this->_db->insert($this->table, $data)) === false) {
             $this->_error = $this->_db->lastError();
         }
         return $status;
