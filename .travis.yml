@@ -1,10 +1,10 @@
 language: php
 php:
   - "7.0"
-  - "hhvm"
+  - "hhvm-3.12"
 matrix:
   allow_failures:
-    - php: hhvm
+    - php: hhvm-3.12
 install:
   - composer self-update
   - composer install
