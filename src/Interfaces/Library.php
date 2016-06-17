@@ -12,13 +12,13 @@
  * @link      https://github.com/slaxweb/
  * @version   0.4
  */
-namespace SlaxWeb\Database;
+namespace SlaxWeb\Database\Interfaces;
 
 use SlaxWeb\Database\Error;
 use SlaxWeb\Database\ResultInterface;
 use SlaxWeb\Database\Exception\NoErrorException;
 
-interface LibraryInterface
+interface Library
 {
     /**
      * Available database drivers
