@@ -15,6 +15,7 @@
 namespace SlaxWeb\Database;
 
 use SlaxWeb\Database\Error;
+use SlaxWeb\Database\ResultInterface;
 use SlaxWeb\Database\Exception\NoErrorException;
 
 interface LibraryInterface
@@ -36,6 +37,20 @@ interface LibraryInterface
     const DB_4D = "4d";
 
     /**
+     * Execute Query
+     *
+     * Executes the received query and binds the received parameters into the query
+     * to decrease the chance of an SQL injection. Returns bool(true) if query was
+     * successfuly executed, and bool(false) if it was not. If the query yielded
+     * a result set, a Result object will be populated.
+     *
+     * @param string $query The Query to be executed
+     * @param array $data Data to be bound into the Query
+     * @return bool
+     */
+    public function execute(string $query, array $data): bool;
+
+    /**
      * Insert row
      *
      * Inserts a row into the database with the provided data. Returns bool(true)
@@ -46,6 +61,16 @@ interface LibraryInterface
      * @return bool
      */
     public function insert(string $table, array $data): bool;
+
+    /**
+     * Fetch Results
+     *
+     * It fetches the results from the last executed statement, creates the Result
+     * object and returns it.
+     *
+     * @return \SlaxWeb\Database\ResultInterface
+     */
+    public function fetch(): ResultInterface;
 
     /**
      * Get last error
