@@ -15,8 +15,8 @@
 namespace SlaxWeb\Database\Interfaces;
 
 use SlaxWeb\Database\Error;
-use SlaxWeb\Database\ResultInterface;
 use SlaxWeb\Database\Exception\NoErrorException;
+use SlaxWeb\Database\Interfaces\Result as ResultInterface;
 
 interface Library
 {
