@@ -70,4 +70,16 @@ interface Result
      * @return int
      */
     public function rowCount(): int;
+
+    /**
+     * Get Row
+     *
+     * Returns the row object to the caller. If the row does not exists, an exception
+     * is thrown.
+     *
+     * @return \stdClass
+     *
+     * @exceptions \SlaxWeb\Database\Exception\ResultRowNotFoundException
+     */
+    public function get(): \stdClass;
 }
