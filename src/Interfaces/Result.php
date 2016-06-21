@@ -61,4 +61,13 @@ interface Result
      * @return bool
      */
     public function row(int $row): bool;
+
+    /**
+     * Get row count
+     *
+     * Get the row count of the result set.
+     *
+     * @return int
+     */
+    public function rowCount(): int;
 }
