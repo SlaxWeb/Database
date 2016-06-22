@@ -87,6 +87,15 @@ interface Result
     public function rowCount(): int;
 
     /**
+     * Get result set
+     *
+     * Returns the raw result set array to the caller.
+     *
+     * @return array
+     */
+    public function getResults(): array;
+
+    /**
      * Get Row
      *
      * Returns the row object to the caller. If the row does not exists, an exception
