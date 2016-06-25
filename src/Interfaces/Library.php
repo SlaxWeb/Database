@@ -63,6 +63,25 @@ interface Library
     public function insert(string $table, array $data): bool;
 
     /**
+     * Select query
+     *
+     * Run a select query against the database and return the result set if it was
+     * successful. Throw an exception on error. The input array defines a list of
+     * columns that need to get selected from the database. If a SQL function should
+     * be executed on a column, like i.e., MAX, then the key of that value should
+     * be the name of that function. If the key is numeric, the column is used normally
+     * in the query.
+     *
+     * @param string $table Table on which the select statement is to be executed
+     * @param array $cols Array of columns for the SELECT statement
+     * @return \SlaxWeb\DatabasePDO\Result
+     *
+     * @exceptions \SlaxWeb\DatabasePDO\Exception\QueryException
+     *             \SlaxWeb\DatabasePDO\Exception\NoDataException
+     */
+    public function select(string $table, array $cols): ResultInterface;
+
+    /**
      * Fetch Results
      *
      * It fetches the results from the last executed statement, creates the Result
@@ -71,6 +90,18 @@ interface Library
      * @return \SlaxWeb\Database\ResultInterface
      */
     public function fetch(): ResultInterface;
+
+    /**
+     * Add Where Predicate
+     *
+     * Adds a SQL DML WHERE predicate to the query.
+     *
+     * @param string $column Column name
+     * @param mixed $value Value of the predicate
+     * @param string $opr Logical operator
+     * @return void
+     */
+    public function where(string $column, $value, string $opr = Predicate::OPR_EQUAL);
 
     /**
      * Get last error
