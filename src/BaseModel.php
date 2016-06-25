@@ -20,6 +20,7 @@ use ICanBoogie\Inflector;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
 use SlaxWeb\Database\LibraryInterface as Database;
+use SlaxWeb\Database\Interfaces\Result as ResultInterface;
 
 abstract class BaseModel
 {
@@ -153,6 +154,25 @@ abstract class BaseModel
             $this->_error = $this->_db->lastError();
         }
         return $status;
+    }
+
+    /**
+     * Select query
+     *
+     * Run a select query on the database with the previously assigned columns,
+     * joins, group bys, limits, etc. The column list is an array, if the key of
+     * an entry is of type string, then the name of that key is used as a SQL function.
+     * On success it returns the Result object, and on error it raises an Exception.
+     *
+     * @param array $columns Column list
+     * @return \SlaxWeb\Database\Interfaces\Result
+     *
+     * @exceptions \SlaxWeb\Database\Exception\QueryException
+     *             \SlaxWeb\Database\Exception\NoDataException
+     */
+    public function select(array $columns): ResultInterface
+    {
+        return $this->_db->select($this->table, $columns);
     }
 
     /**
