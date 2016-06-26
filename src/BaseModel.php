@@ -188,7 +188,7 @@ abstract class BaseModel
      * @param string $opr Logical operator
      * @return self
      */
-    public function where(string $column, $value, string $opr = Predicate::OPR_EQUAL): self
+    public function where(string $column, $value, string $opr = "="): self
     {
         $this->_db->where($column, $value, $opr);
         return $this;
@@ -205,7 +205,7 @@ abstract class BaseModel
      * @param string $opr Logical operator
      * @return self
      */
-    public function orWhere(string $column, $value, string $opr = Predicate::OPR_EQUAL): self
+    public function orWhere(string $column, $value, string $opr = "="): self
     {
         $this->_db->where($column, $value, $opr, "OR");
         return $this;
