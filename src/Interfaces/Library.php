@@ -98,10 +98,11 @@ interface Library
      *
      * @param string $column Column name
      * @param mixed $value Value of the predicate
-     * @param string $opr Logical operator
+     * @param string $lOpr Logical operator, default Predicate::OPR_EQUAL
+     * @param string $cOpr Comparisson operator, default string("AND")
      * @return void
      */
-    public function where(string $column, $value, string $opr = Predicate::OPR_EQUAL);
+    public function where(string $column, $value, string $lOpr = Predicate::OPR_EQUAL, string $cOpr = "AND");
 
     /**
      * Get last error

@@ -176,6 +176,42 @@ abstract class BaseModel
     }
 
     /**
+     * Where predicate
+     *
+     * Adds a where predicate for the next query to be ran. The method takes 3 input
+     * arguments, where the first is the name of column, the second is the value
+     * of the predicate, and the 3rd is an logical operator linking the two. The
+     * logical operator defaults to the equals signs(=).
+     *
+     * @param string $column Column name
+     * @param mixed $value Value of the predicate
+     * @param string $opr Logical operator
+     * @return self
+     */
+    public function where(string $column, $value, string $opr = Predicate::OPR_EQUAL): self
+    {
+        $this->_db->where($column, $value, $opr);
+        return $this;
+    }
+
+    /**
+     * Or Where predicate
+     *
+     * Works the same way as 'Where predicate' method, except it adds the predicate
+     * to the list with the "OR" comparison operator.
+     *
+     * @param string $column Column name
+     * @param mixed $value Value of the predicate
+     * @param string $opr Logical operator
+     * @return self
+     */
+    public function orWhere(string $column, $value, string $opr = Predicate::OPR_EQUAL): self
+    {
+        $this->_db->where($column, $value, $opr, "OR");
+        return $this;
+    }
+
+    /**
      * Invoke callback
      *
      * Invokes the the callback in the order that they are stored in the callback
