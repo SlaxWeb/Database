@@ -105,6 +105,18 @@ interface Library
     public function where(string $column, $value, string $lOpr = "=", string $cOpr = "AND");
 
     /**
+     * Add Where Predicate Group
+     *
+     * Adds a group of predicates to the list. The closure received as input must
+     * receive the builder instance for building groups.
+     *
+     * @param closure $predicates Grouped predicates definition closure
+     * @param string $cOpr Comparisson operator, default string("AND")
+     * @return void
+     */
+    public function groupWhere(closure $predicates, string $cOpr = "AND");
+
+    /**
      * Get last error
      *
      * Retrieves the error of the last executed query. If there was no error, an

@@ -212,6 +212,38 @@ abstract class BaseModel
     }
 
     /**
+     * Grouped Where predicates
+     *
+     * Adds a group of predicates to the the predicate list. The method must receive
+     * a closure as its input parameter. The closure in turn receives the builder
+     * object as its input parameter. Additional where predicates must be added
+     * to the builder through this object.
+     *
+     * @param closure $predicates Grouped predicates definition closure
+     * @return self
+     */
+    public function groupWhere(closure $predicates): self
+    {
+        $this->_db->groupWhere($predicates);
+        return $this;
+    }
+
+    /**
+     * Or Grouped Where predicates
+     *
+     * Works the same way as 'Grouped Where predicates' method, except it adds the
+     * predicate group to the list with the "OR" comparison operator.
+     *
+     * @param closure $predicates Grouped predicates definition closure
+     * @return self
+     */
+    public function orGroupWhere(closure $predicates): self
+    {
+        $this->_db->groupWhere($predicates, "OR");
+        return $this;
+    }
+
+    /**
      * Invoke callback
      *
      * Invokes the the callback in the order that they are stored in the callback
