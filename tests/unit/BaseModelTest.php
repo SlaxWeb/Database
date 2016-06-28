@@ -18,7 +18,7 @@ use ICanBoogie\Inflector;
 use SlaxWeb\Database\BaseModel;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
-use SlaxWeb\Database\LibraryInterface as Database;
+use SlaxWeb\Database\Interfaces\Library as Database;
 
 class BaseModelTest extends \PHPUnit_Framework_TestCase
 {

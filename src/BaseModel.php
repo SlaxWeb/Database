@@ -19,7 +19,7 @@ namespace SlaxWeb\Database;
 use ICanBoogie\Inflector;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
-use SlaxWeb\Database\LibraryInterface as Database;
+use SlaxWeb\Database\Interfaces\Library as Database;
 use SlaxWeb\Database\Interfaces\Result as ResultInterface;
 
 abstract class BaseModel
