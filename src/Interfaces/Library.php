@@ -114,7 +114,7 @@ interface Library
      * @param string $cOpr Comparisson operator, default string("AND")
      * @return void
      */
-    public function groupWhere(closure $predicates, string $cOpr = "AND");
+    public function groupWhere(\closure $predicates, string $cOpr = "AND");
 
     /**
      * Get last error
