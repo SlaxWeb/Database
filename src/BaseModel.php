@@ -219,10 +219,10 @@ abstract class BaseModel
      * object as its input parameter. Additional where predicates must be added
      * to the builder through this object.
      *
-     * @param closure $predicates Grouped predicates definition closure
+     * @param Closure $predicates Grouped predicates definition closure
      * @return self
      */
-    public function groupWhere(closure $predicates): self
+    public function groupWhere(\Closure $predicates): self
     {
         $this->_db->groupWhere($predicates);
         return $this;

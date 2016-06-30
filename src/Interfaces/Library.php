@@ -110,11 +110,11 @@ interface Library
      * Adds a group of predicates to the list. The closure received as input must
      * receive the builder instance for building groups.
      *
-     * @param closure $predicates Grouped predicates definition closure
+     * @param Closure $predicates Grouped predicates definition closure
      * @param string $cOpr Comparisson operator, default string("AND")
      * @return void
      */
-    public function groupWhere(\closure $predicates, string $cOpr = "AND");
+    public function groupWhere(\Closure $predicates, string $cOpr = "AND");
 
     /**
      * Get last error
