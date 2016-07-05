@@ -234,10 +234,10 @@ abstract class BaseModel
      * Works the same way as 'Grouped Where predicates' method, except it adds the
      * predicate group to the list with the "OR" comparison operator.
      *
-     * @param closure $predicates Grouped predicates definition closure
+     * @param Closure $predicates Grouped predicates definition closure
      * @return self
      */
-    public function orGroupWhere(closure $predicates): self
+    public function orGroupWhere(\Closure $predicates): self
     {
         $this->_db->groupWhere($predicates, "OR");
         return $this;
