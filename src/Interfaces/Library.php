@@ -124,14 +124,14 @@ interface Library
      *
      * @param string $column Column name
      * @param closure $nested Nested builder
-     * @param string $lOpr Logical operator, default Predicate::OPR_IN
+     * @param string $lOpr Logical operator, default string("IN")
      * @param string $cOpr Comparisson operator, default string("AND")
      * @return void
      */
     public function nestedWhere(
         string $column,
         \Closure $nested,
-        string $lOpr = Predicate::OPR_IN,
+        string $lOpr = "IN",
         string $cOpr = "AND"
     );
 
