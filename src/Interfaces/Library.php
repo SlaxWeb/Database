@@ -118,6 +118,77 @@ interface Library
     public function groupWhere(\Closure $predicates, string $cOpr = "AND");
 
     /**
+     * Where Nested Select
+     *
+     * Add a nested select as a value to the where predicate.
+     *
+     * @param string $column Column name
+     * @param closure $nested Nested builder
+     * @param string $lOpr Logical operator, default Predicate::OPR_IN
+     * @param string $cOpr Comparisson operator, default string("AND")
+     * @return void
+     */
+    public function nestedWhere(
+        string $column,
+        \Closure $nested,
+        string $lOpr = Predicate::OPR_IN,
+        string $cOpr = "AND"
+    );
+
+    /**
+     * Add table to join
+     *
+     * Adds a new table to join with the main table to the list of joins. If only
+     * a table is added without a condition with the 'joinCond', an exception will
+     * be thrown when an attempt to create a query is made.
+     *
+     * @param string $table Table to join to
+     * @param string $type Join type, default self::JOIN_INNER
+     * @return void
+     */
+    public function join(string $table, string $type = Builder::JOIN_INNER);
+
+    /**
+     * Left Join
+     *
+     * Alias for 'join' method with LEFT join as second parameter.
+     *
+     * @param string $table Table to join to
+     * @return void
+     */
+    public function leftJoin(string $table);
+
+    /**
+     * Right Join
+     *
+     * Alias for 'join' method with RIGHT join as second parameter.
+     *
+     * @param string $table Table to join to
+     * @return void
+     */
+    public function rightJoin(string $table);
+
+    /**
+     * Full Join
+     *
+     * Alias for 'join' method with FULL join as second parameter.
+     *
+     * @param string $table Table to join to
+     * @return void
+     */
+    public function fullJoin(string $table);
+
+    /**
+     * Cross Join
+     *
+     * Alias for 'join' method with CROSS join as second parameter.
+     *
+     * @param string $table Table to join to
+     * @return void
+     */
+    public function crossJoin(string $table);
+
+    /**
      * Get last error
      *
      * Retrieves the error of the last executed query. If there was no error, an
