@@ -143,10 +143,10 @@ interface Library
      * be thrown when an attempt to create a query is made.
      *
      * @param string $table Table to join to
-     * @param string $type Join type, default self::JOIN_INNER
+     * @param string $type Join type, default string("INNER JOIN")
      * @return void
      */
-    public function join(string $table, string $type = Builder::JOIN_INNER);
+    public function join(string $table, string $type = "INNER JOIN");
 
     /**
      * Left Join
