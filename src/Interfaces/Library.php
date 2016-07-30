@@ -83,6 +83,31 @@ interface Library
     public function select(string $table, array $cols): ResultInterface;
 
     /**
+     * Update query
+     *
+     * Run an update query against the database. The input array defines a list
+     * of columns and their new values that they should be updated to. The where
+     * predicates that are set before the call to this * method will be used in
+     * the update statement. Returns bool(true) on success, and bool(false) on error.
+     *
+     * @param string $table Table on which the update statement is to be executed
+     * @param array $cols Column list with values
+     * @return bool
+     */
+    public function update(string $table, array $cols): bool;
+
+    /**
+     * Delete query
+     *
+     * Run an delete query against the database. Returns bool(true) on success,
+     * and bool(false) on error.
+     *
+     * @param string $table Table on which the delete statement is to be executed
+     * @return vool
+     */
+    public function delete(string $table): bool;
+
+    /**
      * Fetch Results
      *
      * It fetches the results from the last executed statement, creates the Result
