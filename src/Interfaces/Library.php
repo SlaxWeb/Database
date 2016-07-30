@@ -189,6 +189,45 @@ interface Library
     public function crossJoin(string $table);
 
     /**
+     * Add join condition
+     *
+     * Adds a JOIN condition to the last join added. If no join was yet added, an
+     * exception is raised.
+     *
+     * @param string $primKey Key of the main table for the condition
+     * @param string $forKey Key of the joining table
+     * @param string $cOpr Comparison operator for the two keys
+     * @param string $lOpr Logical operator for multiple JOIN conditions
+     * @return void
+     */
+    public function joinCond(string $primKey, string $forKey, string $cOpr = "=");
+
+    /**
+     * Add OR join condition
+     *
+     * Alias for the 'joinCond' with the "OR" logical operator.
+     *
+     * @param string $primKey Key of the main table for the condition
+     * @param string $forKey Key of the joining table
+     * @param string $cOpr Comparison operator for the two keys
+     * @param string $lOpr Logical operator for multiple JOIN conditions
+     * @return void
+     */
+    public function orJoinCond(string $primKey, string $forKey, string $cOpr = "=");
+
+    /**
+     * Join Columns
+     *
+     * Add columns to include in the select column list. If no table for joining
+     * was yet added, an exception is raised. Same rules apply to the column list
+     * as in the 'select' method.
+     *
+     * @param array $cols Column list
+     * @return void
+     */
+    public function joinCols(array $cols);
+
+    /**
      * Get last error
      *
      * Retrieves the error of the last executed query. If there was no error, an
