@@ -27,28 +27,28 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
      *
      * @var LoggerMock
      */
-    protected $_logger = null;
+    protected $logger = null;
 
     /**
      * Config
      *
      * @var ConfigMock
      */
-    protected $_config = null;
+    protected $config = null;
 
     /**
      * Inflector
      *
      * @var InflectorMock
      */
-    protected $_inflector = null;
+    protected $inflector = null;
 
     /**
      * Database Library
      *
      * @var LibraryMock
      */
-    protected $_db = null;
+    protected $db = null;
 
     /**
      * Set up test
@@ -59,24 +59,24 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->_logger = $this->getMockBuilder(Logger::class)
+        $this->logger = $this->getMockBuilder(Logger::class)
             ->disableOriginalConstructor()
             ->setMockClassName("LoggerMock")
             ->getMockForAbstractClass();
 
-        $this->_config = $this->getMockBuilder(Config::class)
+        $this->config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->setMethods(["offsetGet"])
             ->setMockClassName("ConfigMock")
             ->getMock();
 
-        $this->_inflector = $this->getMockBuilder(Inflector::class)
+        $this->inflector = $this->getMockBuilder(Inflector::class)
             ->disableOriginalConstructor()
             ->setMethods(["pluralize", "camelize", "underscore"])
             ->setMockClassName("InflectorMock")
             ->getMock();
 
-        $this->_db = $this->getMockBuilder(Database::class)
+        $this->db = $this->getMockBuilder(Database::class)
             ->disableOriginalConstructor()
             ->setMethods(["insert", "lastError"])
             ->setMockClassName("DatabaseMock")
@@ -103,7 +103,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->setMockClassName("Test")
             ->getMock();
 
-        $this->_config->expects($this->exactly(22))
+        $this->config->expects($this->exactly(22))
             ->method("offsetGet")
             ->will(
                 $this->onConsecutiveCalls(
@@ -147,19 +147,19 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->_inflector->expects($this->once())
+        $this->inflector->expects($this->once())
             ->method("pluralize")
             ->with("Test")
             ->willReturn("Tests");
 
-        $this->_inflector->expects($this->exactly(2))
+        $this->inflector->expects($this->exactly(2))
             ->method("camelize")
             ->withConsecutive(
                 ["Test", Inflector::UPCASE_FIRST_LETTER],
                 ["Test", Inflector::DOWNCASE_FIRST_LETTER]
             )->will($this->onConsecutiveCalls("Test", "test"));
 
-        $this->_inflector->expects($this->once())
+        $this->inflector->expects($this->once())
             ->method("underscore")
             ->with("Test")
             ->willReturn("test");
@@ -186,7 +186,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         ];
         $model->table = "PreSetTable";
         foreach ($expectations as $exp) {
-            $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
+            $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
             $this->assertEquals($exp, $model->table);
             $model->table = "";
         }
@@ -210,16 +210,16 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->setMockClassName("Test")
             ->getMock();
 
-        $this->_db->expects($this->exactly(2))
+        $this->db->expects($this->exactly(2))
             ->method("insert")
             ->with("TestTable", $row)
             ->will($this->onConsecutiveCalls(true, false));
 
-        $this->_db->expects($this->once())
+        $this->db->expects($this->once())
             ->method("lastError");
 
         $model->table = "TestTable";
-        $model->__construct($this->_logger, $this->_config, $this->_inflector, $this->_db);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
         $this->assertTrue($model->create($row));
         $this->assertFalse($model->create($row));
     }
