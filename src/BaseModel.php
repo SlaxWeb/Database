@@ -51,35 +51,35 @@ abstract class BaseModel
      *
      * @var \Psr\Log\LoggerInterface
      */
-    protected $_logger = null;
+    protected $logger = null;
 
     /**
      * Config object
      *
      * @var \SlaxWeb\Config\Container
      */
-    protected $_config = null;
+    protected $config = null;
 
     /**
      * Inflector object
      *
      * @var \ICanBoogie\Inflector
      */
-    protected $_inflector = null;
+    protected $inflector = null;
 
     /**
      * Database Library
      *
      * @var \SlaxWeb\Database\LibraryInterface
      */
-    protected $_db = null;
+    protected $db = null;
 
     /**
      * Last Query Error object
      *
      * @var \SlaxWeb\Database\Error
      */
-    protected $_error = null;
+    protected $error = null;
 
     /**
      * Callback definitions
@@ -98,16 +98,16 @@ abstract class BaseModel
      *
      * @var array<callable>
      */
-    protected $_beforeInit = [];
-    protected $_afterInit = [];
-    protected $_beforeCreate = [];
-    protected $_afterCreate = [];
-    protected $_beforeRead = [];
-    protected $_afterRead = [];
-    protected $_beforeUpdate = [];
-    protected $_afterUpdate = [];
-    protected $_beforeDelete = [];
-    protected $_afterDelete = [];
+    protected $beforeInit = [];
+    protected $afterInit = [];
+    protected $beforeCreate = [];
+    protected $afterCreate = [];
+    protected $beforeRead = [];
+    protected $afterRead = [];
+    protected $beforeUpdate = [];
+    protected $afterUpdate = [];
+    protected $beforeDelete = [];
+    protected $afterDelete = [];
 
     /**
      * Class constructor
@@ -122,20 +122,20 @@ abstract class BaseModel
      */
     public function __construct(Logger $logger, Config $config, Inflector $inflector, Database $db)
     {
-        $this->_invokeCallback("init");
+        $this->invokeCallback("init");
 
-        $this->_logger = $logger;
-        $this->_config = $config;
-        $this->_inflector = $inflector;
-        $this->_db = $db;
+        $this->logger = $logger;
+        $this->config = $config;
+        $this->inflector = $inflector;
+        $this->db = $db;
 
-        if ($this->table === "" && $this->_config["database.autoTable"]) {
-            $this->_setTable();
+        if ($this->table === "" && $this->config["database.autoTable"]) {
+            $this->setTable();
         }
 
-        $this->_logger->info("Model initialized successfuly", ["model" => get_class($this)]);
+        $this->logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
-        $this->_invokeCallback("init", self::CALLBACK_AFTER);
+        $this->invokeCallback("init", self::CALLBACK_AFTER);
     }
 
     /**
@@ -150,8 +150,8 @@ abstract class BaseModel
      */
     public function create(array $data): bool
     {
-        if (($status = $this->_db->insert($this->table, $data)) === false) {
-            $this->_error = $this->_db->lastError();
+        if (($status = $this->db->insert($this->table, $data)) === false) {
+            $this->error = $this->db->lastError();
         }
         return $status;
     }
@@ -172,7 +172,7 @@ abstract class BaseModel
      */
     public function select(array $columns): ResultInterface
     {
-        return $this->_db->select($this->table, $columns);
+        return $this->db->select($this->table, $columns);
     }
 
     /**
@@ -190,7 +190,7 @@ abstract class BaseModel
      */
     public function where(string $column, $value, string $opr = "="): self
     {
-        $this->_db->where($column, $value, $opr);
+        $this->db->where($column, $value, $opr);
         return $this;
     }
 
@@ -207,7 +207,7 @@ abstract class BaseModel
      */
     public function orWhere(string $column, $value, string $opr = "="): self
     {
-        $this->_db->where($column, $value, $opr, "OR");
+        $this->db->where($column, $value, $opr, "OR");
         return $this;
     }
 
@@ -224,7 +224,7 @@ abstract class BaseModel
      */
     public function groupWhere(\Closure $predicates): self
     {
-        $this->_db->groupWhere($predicates);
+        $this->db->groupWhere($predicates);
         return $this;
     }
 
@@ -239,7 +239,7 @@ abstract class BaseModel
      */
     public function orGroupWhere(\Closure $predicates): self
     {
-        $this->_db->groupWhere($predicates, "OR");
+        $this->db->groupWhere($predicates, "OR");
         return $this;
     }
 
@@ -258,7 +258,7 @@ abstract class BaseModel
         \Closure $nested,
         string $lOpr = "IN"
     ): self {
-        $this->_db->nestedWhere($column, $nested, $lOpr);
+        $this->db->nestedWhere($column, $nested, $lOpr);
         return $this;
     }
 
@@ -278,7 +278,7 @@ abstract class BaseModel
         \Closure $nested,
         string $lOpr = "IN"
     ): self {
-        $this->_db->nestedWhere($column, $nested, $lOpr, "OR");
+        $this->db->nestedWhere($column, $nested, $lOpr, "OR");
         return $this;
     }
 
@@ -293,17 +293,16 @@ abstract class BaseModel
      * @param bool $before Invoke 'before' callables of '$name' callback, default self::CALLBACK_BEFORE
      * @return void
      */
-    protected function _invokeCallback(string $name, bool $before = self::CALLBACK_BEFORE)
+    protected function invokeCallback(string $name, bool $before = self::CALLBACK_BEFORE)
     {
         $name = ($before ? "before" : "after") . ucfirst($name);
-        $property = "_{$name}";
-        if (isset($this->{$property}) === false || is_array($this->{$property}) === false) {
+        if (isset($this->{$name}) === false || is_array($this->{$name}) === false) {
             // @todo: throw exception
             return;
         }
 
         $params = array_slice(func_get_args(), 2);
-        foreach ($this->{$property} as $callable) {
+        foreach ($this->{$name} as $callable) {
             $callable(...$params);
         }
     }
@@ -319,26 +318,26 @@ abstract class BaseModel
      *
      * @return void
      */
-    protected function _setTable()
+    protected function setTable()
     {
         $this->table = get_class($this);
         if (($pos = strrpos($this->table, "\\")) !== false) {
             $this->table = substr($this->table, $pos + 1);
         }
 
-        if ($this->_config["database.pluralizeTableName"]) {
-            $this->table = $this->_inflector->pluralize($this->table);
+        if ($this->config["database.pluralizeTableName"]) {
+            $this->table = $this->inflector->pluralize($this->table);
         }
 
-        switch ($this->_config["database.tableNameStyle"]) {
+        switch ($this->config["database.tableNameStyle"]) {
             case self::TBL_NAME_CAMEL_UCFIRST:
-                $this->table = $this->_inflector->camelize($this->table, Inflector::UPCASE_FIRST_LETTER);
+                $this->table = $this->inflector->camelize($this->table, Inflector::UPCASE_FIRST_LETTER);
                 break;
             case self::TBL_NAME_CAMEL_LCFIRST:
-                $this->table = $this->_inflector->camelize($this->table, Inflector::DOWNCASE_FIRST_LETTER);
+                $this->table = $this->inflector->camelize($this->table, Inflector::DOWNCASE_FIRST_LETTER);
                 break;
             case self::TBL_NAME_UNDERSCORE:
-                $this->table = $this->_inflector->underscore($this->table);
+                $this->table = $this->inflector->underscore($this->table);
                 break;
             case self::TBL_NAME_UPPERCASE:
                 $this->table = strtoupper($this->table);
