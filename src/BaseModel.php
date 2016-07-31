@@ -244,6 +244,45 @@ abstract class BaseModel
     }
 
     /**
+     * Where Nested Select
+     *
+     * Add a nested select as a value to the where predicate.
+     *
+     * @param string $column Column name
+     * @param closure $nested Nested builder
+     * @param string $lOpr Logical operator, default string("IN")
+     * @return self
+     */
+    public function nestedWhere(
+        string $column,
+        \Closure $nested,
+        string $lOpr = "IN"
+    ): self {
+        $this->_db->nestedWhere($column, $nested, $lOpr);
+        return $this;
+    }
+
+    /**
+     * Or Where Nested Select
+     *
+     * Works the same way as "Where Nested Select" except that it links the nested
+     * select predicate with an "OR" comparisson operator instead of an "AND".
+     *
+     * @param string $column Column name
+     * @param closure $nested Nested builder
+     * @param string $lOpr Logical operator, default string("IN")
+     * @return self
+     */
+    public function orNestedWhere(
+        string $column,
+        \Closure $nested,
+        string $lOpr = "IN"
+    ): self {
+        $this->_db->nestedWhere($column, $nested, $lOpr, "OR");
+        return $this;
+    }
+
+    /**
      * Invoke callback
      *
      * Invokes the the callback in the order that they are stored in the callback
