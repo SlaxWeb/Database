@@ -255,4 +255,34 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($model->update($row));
         $this->assertFalse($model->update($row));
     }
+
+    /**
+     * Test delete method
+     *
+     * Delete method must call 'delete' with an unmodified input array and call
+     * 'lastError' of the database library object if return value equals false.
+     *
+     * @return void
+     */
+    public function testDelete()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->setMockClassName("Test")
+            ->getMock();
+
+        $this->db->expects($this->exactly(2))
+            ->method("delete")
+            ->with("TestTable")
+            ->will($this->onConsecutiveCalls(true, false));
+
+        $this->db->expects($this->once())
+            ->method("lastError");
+
+        $model->table = "TestTable";
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $this->assertTrue($model->delete());
+        $this->assertFalse($model->delete());
+    }
 }

@@ -208,6 +208,26 @@ abstract class BaseModel
     }
 
     /**
+     * Delete query
+     *
+     * Run an delete query against the database. Returns bool(true) on success,
+     * and bool(false) on error.
+     *
+     * @return bool
+     */
+    public function delete(): bool
+    {
+        $this->invokeCallback("delete");
+
+        if (($status = $this->db->delete($this->table)) === false) {
+            $this->error = $this->db->lastError();
+        }
+
+        $this->invokeCallback("delete", self::CALLBACK_AFTER);
+        return $status;
+    }
+
+    /**
      * Where predicate
      *
      * Adds a where predicate for the next query to be ran. The method takes 3 input
