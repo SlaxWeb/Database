@@ -150,9 +150,13 @@ abstract class BaseModel
      */
     public function create(array $data): bool
     {
+        $this->invokeCallback("create");
+
         if (($status = $this->db->insert($this->table, $data)) === false) {
             $this->error = $this->db->lastError();
         }
+
+        $this->invokeCallback("create", self::CALLBACK_AFTER);
         return $status;
     }
 
@@ -172,7 +176,12 @@ abstract class BaseModel
      */
     public function select(array $columns): ResultInterface
     {
-        return $this->db->select($this->table, $columns);
+        $this->invokeCallback("read", self::CALLBACK_AFTER);
+
+        $result = $this->db->select($this->table, $columns);
+
+        $this->invokeCallback("read", self::CALLBACK_AFTER);
+        return $result;
     }
 
     /**
@@ -289,7 +298,6 @@ abstract class BaseModel
      * a table is added without a condition with the 'joinCond', an exception will
      * be thrown when an attempt to create a query is made.
      *
-     * @param string $table Table to join to
      * @param string $type Join type, default string("INNER JOIN")
      * @return self
      */
