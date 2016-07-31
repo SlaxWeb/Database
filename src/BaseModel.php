@@ -283,6 +283,126 @@ abstract class BaseModel
     }
 
     /**
+     * Add table to join
+     *
+     * Adds a new table to join with the main table to the list of joins. If only
+     * a table is added without a condition with the 'joinCond', an exception will
+     * be thrown when an attempt to create a query is made.
+     *
+     * @param string $table Table to join to
+     * @param string $type Join type, default string("INNER JOIN")
+     * @return self
+     */
+    public function join(string $type = "INNER JOIN"): self
+    {
+        $this->db->join($this->table, $type);
+        return $this;
+    }
+
+    /**
+     * Left Join
+     *
+     * Alias for 'join' method with LEFT join as second parameter.
+     *
+     * @return self
+     */
+    public function leftJoin(): self
+    {
+        $this->db->join($this->table, "LEFT OUTTER JOIN");
+        return $this;
+    }
+
+    /**
+     * Right Join
+     *
+     * Alias for 'join' method with RIGHT join as second parameter.
+     *
+     * @return void
+     */
+    public function rightJoin(): self
+    {
+        $this->db->join($this->table, "RIGHT OUTTER JOIN");
+        return $this;
+    }
+
+    /**
+     * Full Join
+     *
+     * Alias for 'join' method with FULL join as second parameter.
+     *
+     * @return self
+     */
+    public function fullJoin(): self
+    {
+        $this->db->join($this->table, "FULL JOIN");
+        return $this;
+    }
+
+    /**
+     * Cross Join
+     *
+     * Alias for 'join' method with CROSS join as second parameter.
+     *
+     * @return self
+     */
+    public function crossJoin(): self
+    {
+        $this->db->join($this->table, "CROSS JOIN");
+        return $this;
+    }
+
+    /**
+     * Add join condition
+     *
+     * Adds a JOIN condition to the last join added. If no join was yet added, an
+     * exception is raised.
+     *
+     * @param string $primKey Key of the main table for the condition
+     * @param string $forKey Key of the joining table
+     * @param string $cOpr Comparison operator for the two keys
+     * @param string $lOpr Logical operator for multiple JOIN conditions
+     * @return self
+     */
+    public function joinCond(string $primKey, string $forKey, string $cOpr = "="): self
+    {
+        $this->db->joinCond($primKey, $forKey, $cOpr);
+        return $this;
+    }
+
+    /**
+     * Add OR join condition
+     *
+     * Alias for the 'joinCond' with the "OR" logical operator.
+     *
+     * @param string $primKey Key of the main table for the condition
+     * @param string $forKey Key of the joining table
+     * @param string $cOpr Comparison operator for the two keys
+     * @param string $lOpr Logical operator for multiple JOIN conditions
+     * @return self
+     */
+    public function orJoinCond(string $primKey, string $forKey, string $cOpr = "="): self
+    {
+        $this->db->joinCond($primKey, $forKey, $cOpr, "OR");
+        return $this;
+    }
+
+    /**
+     * Join Columns
+     *
+     * Add columns to include in the select column list. If no table for joining
+     * was yet added, an exception is raised. Same rules apply to the column list
+     * as in the 'select' method.
+     *
+     * @param array $cols Column list
+     * @return self
+     */
+    public function joinCols(array $cols): self
+    {
+        $this->db->joinCols($cols);
+        return $this;
+    }
+
+    /**
      * Invoke callback
      *
      * Invokes the the callback in the order that they are stored in the callback
