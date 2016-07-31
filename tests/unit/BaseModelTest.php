@@ -223,4 +223,36 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($model->create($row));
         $this->assertFalse($model->create($row));
     }
+
+    /**
+     * Test update method
+     *
+     * Update method must call 'update' with an unmodified input array and call
+     * 'lastError' of the database library object if return value equals false.
+     *
+     * @return void
+     */
+    public function testUpdate()
+    {
+        $row = ["foo" => "bar"];
+
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->setMockClassName("Test")
+            ->getMock();
+
+        $this->db->expects($this->exactly(2))
+            ->method("update")
+            ->with("TestTable", $row)
+            ->will($this->onConsecutiveCalls(true, false));
+
+        $this->db->expects($this->once())
+            ->method("lastError");
+
+        $model->table = "TestTable";
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $this->assertTrue($model->update($row));
+        $this->assertFalse($model->update($row));
+    }
 }

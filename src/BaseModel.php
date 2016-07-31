@@ -176,12 +176,35 @@ abstract class BaseModel
      */
     public function select(array $columns): ResultInterface
     {
-        $this->invokeCallback("read", self::CALLBACK_AFTER);
+        $this->invokeCallback("read");
 
         $result = $this->db->select($this->table, $columns);
 
         $this->invokeCallback("read", self::CALLBACK_AFTER);
         return $result;
+    }
+
+    /**
+     * Update query
+     *
+     * Run an update query against the database. The input array defines a list
+     * of columns and their new values that they should be updated to. The where
+     * predicates that are set before the call to this * method will be used in
+     * the update statement. Returns bool(true) on success, and bool(false) on error.
+     *
+     * @param array $columns Column list with values
+     * @return bool
+     */
+    public function update(array $columns): bool
+    {
+        $this->invokeCallback("update");
+
+        if (($status = $this->db->update($this->table, $columns)) === false) {
+            $this->error = $this->db->lastError();
+        }
+
+        $this->invokeCallback("update", self::CALLBACK_AFTER);
+        return $status;
     }
 
     /**
