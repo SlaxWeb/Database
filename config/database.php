@@ -12,7 +12,7 @@
  * @version   0.4
  */
 use SlaxWeb\Database\BaseModel;
-use SlaxWeb\Database\LibraryInterface as Driver;
+use SlaxWeb\Database\Interfaces\Library as Driver;
 
 /*
  * Connection Data

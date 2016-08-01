@@ -454,6 +454,52 @@ abstract class BaseModel
     }
 
     /**
+     * Group by
+     *
+     * Add a column to the group by list.
+     *
+     * @param string $col Column name to be added to the group by list.
+     * @return self
+     */
+    public function groupBy(string $col): self
+    {
+        $this->db->groupBy($col);
+        return $this;
+    }
+
+    /**
+     * Order by
+     *
+     * Add a column to the order by list.
+     *
+     * @param string $col Column name to be added to the group by list
+     * @param string $direction Direction of order, default self::ORDER_ASC
+     * @param string $func SQL function to use ontop of the column, default string("")
+     * @return self
+     */
+    public function orderBy(string $col, string $direction = "ASC", string $func = ""): self
+    {
+        $this->db->orderBy($col, $direction, $func);
+        return $this;
+    }
+
+    /**
+     * Limit
+     *
+     * Limit number of rows to be returned from the database. Second parameter will
+     * also add an offset to the statement.
+     *
+     * @param int $limit Number of rows to limit the result set to
+     * @param int $offset Number of rows for the result to be offset from, default int(0)
+     * @return self
+     */
+    public function limit(int $limit, int $offset = 0): self
+    {
+        $this->db->limit($limit, $offset);
+        return $this;
+    }
+
+    /**
      * Invoke callback
      *
      * Invokes the the callback in the order that they are stored in the callback
