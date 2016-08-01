@@ -17,6 +17,7 @@
 namespace SlaxWeb\Database;
 
 use ICanBoogie\Inflector;
+use SlaxWeb\Database\Error;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
 use SlaxWeb\Database\Interfaces\Library as Database;
@@ -497,6 +498,18 @@ abstract class BaseModel
     {
         $this->db->limit($limit, $offset);
         return $this;
+    }
+
+    /**
+     * Get last error
+     *
+     * Retrieves the last occured error from the database library and returns it.
+     *
+     * @return \SlaxWeb\Database\Error
+     */
+    public function lastError(): Error
+    {
+        return $this->db->lastError();
     }
 
     /**
