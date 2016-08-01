@@ -22,7 +22,14 @@ class Error
      *
      * @var string
      */
-    protected $_message = "";
+    protected $message = "";
+
+    /**
+     * Query
+     *
+     * @var string
+     */
+    protected $query = "";
 
     /**
      * Class constructor
@@ -30,10 +37,12 @@ class Error
      * Sets the error data to protected properties.
      *
      * @param string $message Error message
+     * @param string $query Query at which the error occured
      * @return void
      */
-    public function __construct(string $message)
+    public function __construct(string $message, string $query)
     {
-        $this->_message = $message;
+        $this->message = $message;
+        $this->query = $query;
     }
 }
