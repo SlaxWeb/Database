@@ -22,14 +22,14 @@ class Error
      *
      * @var string
      */
-    protected $message = "";
+    protected $_message = "";
 
     /**
      * Query
      *
      * @var string
      */
-    protected $query = "";
+    protected $_query = "";
 
     /**
      * Class constructor
@@ -42,7 +42,7 @@ class Error
      */
     public function __construct(string $message, string $query)
     {
-        $this->message = $message;
-        $this->query = $query;
+        $this->_message = $message;
+        $this->_query = $query;
     }
 }
