@@ -20,6 +20,7 @@ use ICanBoogie\Inflector;
 use SlaxWeb\Database\Error;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
+use SlaxWeb\Database\Exception\QueryException;
 use SlaxWeb\Database\Interfaces\Library as Database;
 use SlaxWeb\Database\Interfaces\Result as ResultInterface;
 
