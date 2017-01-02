@@ -30,7 +30,18 @@ class Provider implements \Pimple\ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $container["loadModel.service"] = $container->protect(
+        // loadModel.service is deprecated, log a warning and call 'loadDBModel.service'
+        $container["loadModel.service"] = $container->protecte(
+            function (string $model) use ($container) {
+                $container["logger.service"]->warning(
+                    "'loadModel.service' is deprecated and will be removed in future releases."
+                    . "Use 'loadDBModel.service' instead."
+                );
+                return $container["loadDBModel.service"](...func_get_args());
+            }
+        );
+
+        $container["loadDBModel.service"] = $container->protect(
             function (string $model) use ($container) {
                 $class = rtrim($container["config.service"]["database.classNamespace"], "\\")
                     . "\\"
