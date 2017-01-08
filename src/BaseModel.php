@@ -42,6 +42,15 @@ abstract class BaseModel
     const CALLBACK_AFTER = false;
 
     /**
+     * Join types
+     */
+    const JOIN_INNER = "INNER JOIN";
+    const JOIN_LEFT = "LEFT OUTER JOIN";
+    const JOIN_RIGHT = "RIGHT OUTER JOIN";
+    const JOIN_FULL = "FULL OUTER JOIN";
+    const JOIN_CROSS = "CROSS JOIN";
+
+    /**
      * Table name
      *
      * @var string
@@ -349,58 +358,6 @@ abstract class BaseModel
     public function join(string $type = "INNER JOIN"): self
     {
         $this->db->join($this->table, $type);
-        return $this;
-    }
-
-    /**
-     * Left Join
-     *
-     * Alias for 'join' method with LEFT join as second parameter.
-     *
-     * @return self
-     */
-    public function leftJoin(): self
-    {
-        $this->db->join($this->table, "LEFT OUTTER JOIN");
-        return $this;
-    }
-
-    /**
-     * Right Join
-     *
-     * Alias for 'join' method with RIGHT join as second parameter.
-     *
-     * @return void
-     */
-    public function rightJoin(): self
-    {
-        $this->db->join($this->table, "RIGHT OUTTER JOIN");
-        return $this;
-    }
-
-    /**
-     * Full Join
-     *
-     * Alias for 'join' method with FULL join as second parameter.
-     *
-     * @return self
-     */
-    public function fullJoin(): self
-    {
-        $this->db->join($this->table, "FULL JOIN");
-        return $this;
-    }
-
-    /**
-     * Cross Join
-     *
-     * Alias for 'join' method with CROSS join as second parameter.
-     *
-     * @return self
-     */
-    public function crossJoin(): self
-    {
-        $this->db->join($this->table, "CROSS JOIN");
         return $this;
     }
 
