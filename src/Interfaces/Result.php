@@ -18,17 +18,6 @@ namespace SlaxWeb\Database\Interfaces;
 interface Result
 {
     /**
-     * Class constructor
-     *
-     * Save the raw result data into the protected property '$_rawData' and parse
-     * it.
-     *
-     * @param array $rawData Raw data array
-     * @return void
-     */
-    public function __construct(array $data);
-
-    /**
      * Magic Get Method
      *
      * Retrieves the result row column value and returns it to the caller. If the
