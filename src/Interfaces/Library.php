@@ -170,46 +170,6 @@ interface Library
     public function join(string $table, string $type = "INNER JOIN");
 
     /**
-     * Left Join
-     *
-     * Alias for 'join' method with LEFT join as second parameter.
-     *
-     * @param string $table Table to join to
-     * @return void
-     */
-    public function leftJoin(string $table);
-
-    /**
-     * Right Join
-     *
-     * Alias for 'join' method with RIGHT join as second parameter.
-     *
-     * @param string $table Table to join to
-     * @return void
-     */
-    public function rightJoin(string $table);
-
-    /**
-     * Full Join
-     *
-     * Alias for 'join' method with FULL join as second parameter.
-     *
-     * @param string $table Table to join to
-     * @return void
-     */
-    public function fullJoin(string $table);
-
-    /**
-     * Cross Join
-     *
-     * Alias for 'join' method with CROSS join as second parameter.
-     *
-     * @param string $table Table to join to
-     * @return void
-     */
-    public function crossJoin(string $table);
-
-    /**
      * Add join condition
      *
      * Adds a JOIN condition to the last join added. If no join was yet added, an
