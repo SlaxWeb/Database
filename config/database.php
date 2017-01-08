@@ -64,15 +64,6 @@ $configuration["pluralizeTableName"] = true;
 $configuration["tableNameStyle"] = BaseModel::TBL_NAME_CAMEL_LCFIRST;
 
 /*
- * Model loader
- *
- * Available options are:
- * - PDO (if subcomponent database-pdo is installed)
- * - Illuminate (if subcomponent database-illuminate is installed)
- */
-$configuration["loader"] = "PHP";
-
-/*
  * Model class namespace
  *
  * The namespace in which the Model classes are defined.
