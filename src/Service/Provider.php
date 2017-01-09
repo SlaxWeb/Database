@@ -31,7 +31,7 @@ class Provider implements \Pimple\ServiceProviderInterface
     public function register(Container $container)
     {
         // loadModel.service is deprecated, log a warning and call 'loadDBModel.service'
-        $container["loadModel.service"] = $container->protecte(
+        $container["loadModel.service"] = $container->protect(
             function (string $model) use ($container) {
                 $container["logger.service"]->warning(
                     "'loadModel.service' is deprecated and will be removed in future releases."

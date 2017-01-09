@@ -34,7 +34,7 @@ use SlaxWeb\Database\Interfaces\Library as Driver;
 $configuration["connection"] = [
     "driver"    =>  Driver::DB_MYSQL,
     "hostname"  =>  "localhost",
-    "port"      =>  0
+    "port"      =>  0,
     "database"  =>  "",
     "username"  =>  "",
     "password"  =>  ""
