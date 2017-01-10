@@ -10,9 +10,9 @@
     ],
     "require": {
         "php":  ">=7.0.0",
-        "slaxweb/logger": "dev-develop",
-        "slaxweb/config": "dev-develop",
-        "slaxweb/getset": "dev-develop",
+        "slaxweb/logger": "~0.3",
+        "slaxweb/config": "~0.2",
+        "slaxweb/getset": "~0.1",
         "icanboogie/inflector": "~1.4"
     },
     "require-dev": {
@@ -29,8 +29,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-develop": "0.4.x-dev"
+            "dev-master": "0.5.x-dev"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
