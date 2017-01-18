@@ -83,7 +83,7 @@ abstract class BaseModel
     /**
      * Database Library
      *
-     * @var \SlaxWeb\Database\LibraryInterface
+     * @var \SlaxWeb\Database\Interfaces\Library
      */
     protected $db = null;
 
@@ -130,7 +130,7 @@ abstract class BaseModel
      * @param \Psr\Log\LoggerInterface $logger PSR-7 compliant logger object
      * @param \SlaxWeb\Config\Container $config Configuration container object
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
-     * @param \SlaxWeb\Database\LibraryInterface $db Database library object
+     * @param \SlaxWeb\Database\Interface\Library $db Database library object
      * @return void
      */
     public function __construct(Logger $logger, Config $config, Inflector $inflector, Database $db)
