@@ -18,6 +18,7 @@ use ICanBoogie\Inflector;
 use SlaxWeb\Database\BaseModel;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
+use SlaxWeb\Database\Interfaces\Result;
 use SlaxWeb\Database\Interfaces\Library as Database;
 
 class BaseModelTest extends \PHPUnit_Framework_TestCase
@@ -179,7 +180,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             "test",
             // Table name underscore
             "test",
-            // Table name uppercase 
+            // Table name uppercase
             "TEST",
             // Table name lowercase
             "test"
@@ -284,5 +285,114 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
         $this->assertTrue($model->delete());
         $this->assertFalse($model->delete());
+    }
+
+    /**
+     * Test No Result
+     *
+     * Ensure the model will raise appropriate exceptions if no results have yet
+     * been obtained, but an attempt to access them was made
+     *
+     * @return void
+     */
+    public function testNoResult()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->setMockClassName("Test")
+            ->getMock();
+
+        $model->table = "TestTable";
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+
+        try {
+            $model->next();
+        } catch (\Throwable $e) {
+            $this->assertInstanceOf(\SlaxWeb\Database\Exception\NoDataException::class, $e);
+        }
+    }
+
+    /**
+     * Test data retrieval
+     *
+     * Ensure 'select' method calls the appropirate methods in the library, returns
+     * and returns the result object.
+     *
+     * @return void
+     *
+     * @depends testNoResult
+     */
+    public function testDataRetrieval()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->setMockClassName("Test")
+            ->getMock();
+
+        $result = $this->createMock(Result::class);
+
+        $this->db->expects($this->once())
+            ->method("library")
+            ->with("TestTable", ["col1"])
+            ->willReturn($result);
+
+        $model->table = "TestTable";
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $this->assertInstanceOf(Result::class, $model->select(["col1"]));
+    }
+
+    /**
+     * Test result handling
+     *
+     * Ensure the result handling methods are forwarded to the Result object in
+     * the BaseModel.
+     *
+     * @return void
+     *
+     * @depends testDataRetrieval
+     */
+    public function testResultHandling()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->setMockClassName("Test")
+            ->getMock();
+
+        $result = $this->getMockBuilder(Result::class)
+            ->setMethods(["__get", "next", "prev", "row", "rowCount", "getResults", "get"])
+            ->getMock();
+
+        // ensure all result methods are called once through their base model counterparts
+        $result->expects($this->once())
+            ->method("__get")
+            ->with("col1");
+        $result->expects($this->once())
+            ->method("next");
+        $result->expects($this->once())
+            ->method("prev");
+        $result->expects($this->once())
+            ->method("row")
+            ->with(1);
+        $result->expects($this->once())
+            ->method("rowCount");
+        $result->expects($this->once())
+            ->method("getResults");
+        $result->expects($this->once())
+            ->method("get");
+
+        $model->table = "TestTable";
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $model->select(["col1"]);
+
+        $model->col1;
+        $model->next();
+        $model->prev();
+        $model->row(1);
+        $model->rowCount();
+        $model->getResults();
+        $model->get();
     }
 }
