@@ -26,6 +26,8 @@ use SlaxWeb\Database\Interfaces\Result as ResultInterface;
 
 abstract class BaseModel
 {
+    use BaseModelResult;
+
     /**
      * Table name style
      */
@@ -189,10 +191,10 @@ abstract class BaseModel
     {
         $this->invokeCallback("read");
 
-        $result = $this->db->select($this->table, $columns);
+        $this->result = $this->db->select($this->table, $columns);
 
         $this->invokeCallback("read", self::CALLBACK_AFTER);
-        return $result;
+        return $this->result;
     }
 
     /**
