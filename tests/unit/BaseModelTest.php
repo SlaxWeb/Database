@@ -334,7 +334,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $result = $this->createMock(Result::class);
 
         $this->db->expects($this->once())
-            ->method("library")
+            ->method("select")
             ->with("TestTable", ["col1"])
             ->willReturn($result);
 
@@ -382,6 +382,11 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->method("getResults");
         $result->expects($this->once())
             ->method("get");
+
+        $this->db->expects($this->once())
+            ->method("select")
+            ->with("TestTable", ["col1"])
+            ->willReturn($result);
 
         $model->table = "TestTable";
         $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
