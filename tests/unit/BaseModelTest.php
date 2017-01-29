@@ -400,4 +400,46 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $model->getResults();
         $model->get();
     }
+
+    /**
+     * Test soft deletes
+     *
+     * Ensure the soft deletion will update the correct column with the correct
+     * value.
+     *
+     * @return void
+     */
+    public function testSoftDelete()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(["update"])
+            ->setMockClassName("Test")
+            ->getMock();
+
+        $model->expects($this->exactly(2))
+            ->withConsecutive(
+                [["deleted" => true]],
+                [["deleted" => ["func" => "NOW()"]]]
+            )->willReturn(true);
+
+        $this->config->expects($this->exactly(5))
+            ->method("offsetGet")
+            ->will(
+                $this->onConsecutiveCalls(
+                    // deny table setting
+                    false,
+                    "deleted",
+                    BaseModel::SDEL_VAL_BOOL,
+                    "deleted",
+                    BaseModel::SDEL_VAL_TIMESTAMP
+                )
+            );
+
+        $model->table = "TestTable";
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+
+        $this->assertTrue($model->delete());
+        $this->assertTrue($model->delete());
+    }
 }
