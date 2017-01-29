@@ -53,6 +53,12 @@ abstract class BaseModel
     const JOIN_CROSS = "CROSS JOIN";
 
     /**
+     * Soft delete options
+     */
+    const SDEL_VAL_BOOL = 1;
+    const SDEL_VAL_TIMESTAMP = 2;
+
+    /**
      * Table name
      *
      * @var string
