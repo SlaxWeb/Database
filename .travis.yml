@@ -10,6 +10,3 @@ install:
   - composer install
 script:
   - php vendor/codeception/codeception/codecept run
-branches:
-  except:
-    - feature/softDelete
