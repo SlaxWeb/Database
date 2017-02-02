@@ -260,7 +260,12 @@ abstract class BaseModel
     {
         $this->invokeCallback("delete");
 
-        if (($status = $this->db->delete($this->table)) === false) {
+        if ($this->softDelete) {
+            $val = $this->delValType === self::SDEL_VAL_TIMESTAMP
+                ? ["func" => "NOW()"]
+                : true;
+            $status = $this->update([$this->delCol => $val]);
+        } elseif (($status = $this->db->delete($this->table)) === false) {
             $this->error = $this->db->lastError();
         }
 
