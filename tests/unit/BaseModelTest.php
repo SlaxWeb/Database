@@ -100,7 +100,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
     {
         $model = $this->getMockBuilder(BaseModel::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->setMethods(["setSoftDelete"])
             ->setMockClassName("Test")
             ->getMock();
 
@@ -399,5 +399,49 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $model->rowCount();
         $model->getResults();
         $model->get();
+    }
+
+    /**
+     * Test soft deletes
+     *
+     * Ensure the soft deletion will update the correct column with the correct
+     * value.
+     *
+     * @return void
+     */
+    public function testSoftDelete()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(["update"])
+            ->getMock();
+
+        $model->expects($this->exactly(2))
+            ->method("update")
+            ->withConsecutive(
+                [["deleted" => true]],
+                [["del" => ["func" => "NOW()"]]]
+            )->willReturn(true);
+
+        $this->config->expects($this->exactly(2))
+            ->method("offsetGet")
+            ->will(
+                $this->onConsecutiveCalls( [
+                    "enabled"   =>  true,
+                    "column"    =>  "deleted",
+                    "value"     =>  BaseModel::SDEL_VAL_BOOL
+                ], [
+                    "enabled"   =>  true,
+                    "column"    =>  "del",
+                    "value"     =>  BaseModel::SDEL_VAL_TIMESTAMP
+                ])
+            );
+
+        $model->table = "TestTable";
+
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $this->assertTrue($model->delete());
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $this->assertTrue($model->delete());
     }
 }

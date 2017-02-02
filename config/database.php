@@ -41,6 +41,24 @@ $configuration["connection"] = [
 ];
 
 /*
+ * Soft delete
+ *
+ * Soft deleting does not delete data from the Database, but merely marks it as
+ * deleted by writing a value in the database. The configuration here defined should
+ * the soft deletion be used at all, the column name, and what value shoul be written
+ * to said column.
+ *
+ * For values the following options are available:
+ * - BaseModel::SDEL_VAL_BOOL - sets the soft delete column to bool value 'true'
+ * - BaseModel::SDEL_VAL_TIMESTAMP - sets the soft delete column to current timestamp
+ */
+$configuration["softDelete"] = [
+    "enabled"   =>  false,
+    "column"    =>  "deleted",
+    "value"     =>  BaseModel::SDEL_VAL_BOOL
+];
+
+/*
  * Automatically set table name if not set before
  */
 $configuration["autoTable"] = true;

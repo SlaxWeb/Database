@@ -53,6 +53,12 @@ abstract class BaseModel
     const JOIN_CROSS = "CROSS JOIN";
 
     /**
+     * Soft delete options
+     */
+    const SDEL_VAL_BOOL = 1;
+    const SDEL_VAL_TIMESTAMP = 2;
+
+    /**
      * Table name
      *
      * @var string
@@ -93,6 +99,27 @@ abstract class BaseModel
      * @var \SlaxWeb\Database\Error
      */
     protected $error = null;
+
+    /**
+     * Soft delete
+     *
+     * @var bool
+     */
+    protected $softDelete = false;
+
+    /**
+     * Soft delete column
+     *
+     * @var string
+     */
+    protected $delCol = "";
+
+    /**
+     * Soft delete value type
+     *
+     * @var int
+     */
+    protected $delValType = 0;
 
     /**
      * Callback definitions
@@ -145,6 +172,7 @@ abstract class BaseModel
         if ($this->table === "" && $this->config["database.autoTable"]) {
             $this->setTable();
         }
+        $this->setSoftDelete();
 
         $this->logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
@@ -232,7 +260,12 @@ abstract class BaseModel
     {
         $this->invokeCallback("delete");
 
-        if (($status = $this->db->delete($this->table)) === false) {
+        if ($this->softDelete) {
+            $val = $this->delValType === self::SDEL_VAL_TIMESTAMP
+                ? ["func" => "NOW()"]
+                : true;
+            $status = $this->update([$this->delCol => $val]);
+        } elseif (($status = $this->db->delete($this->table)) === false) {
             $this->error = $this->db->lastError();
         }
 
@@ -536,5 +569,20 @@ abstract class BaseModel
                 $this->table = strtolower($this->table);
                 break;
         }
+    }
+
+    /**
+     * Set soft deletion
+     *
+     * Sets the soft deletion options to class properties from the configuration.
+     *
+     * @return void
+     */
+    protected function setSoftDelete()
+    {
+        $softDelete = $this->config["database.softDelete"];
+        $this->softDelete = $softDelete["enabled"] ?? false;
+        $this->delCol = $softDelete["column"] ?? "";
+        $this->delValType = $softDelete["value"] ?? 0;
     }
 }
