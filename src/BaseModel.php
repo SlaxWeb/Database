@@ -101,6 +101,27 @@ abstract class BaseModel
     protected $error = null;
 
     /**
+     * Soft delete
+     *
+     * @var bool
+     */
+    protected $softDelete = false;
+
+    /**
+     * Soft delete column
+     *
+     * @var string
+     */
+    protected $delCol = "";
+
+    /**
+     * Soft delete value type
+     *
+     * @var int
+     */
+    protected $delValType = 0;
+
+    /**
      * Callback definitions
      *
      * List of callbacks:
@@ -151,6 +172,7 @@ abstract class BaseModel
         if ($this->table === "" && $this->config["database.autoTable"]) {
             $this->setTable();
         }
+        $this->setSoftDelete();
 
         $this->logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
@@ -542,5 +564,20 @@ abstract class BaseModel
                 $this->table = strtolower($this->table);
                 break;
         }
+    }
+
+    /**
+     * Set soft deletion
+     *
+     * Sets the soft deletion options to class properties from the configuration.
+     *
+     * @return void
+     */
+    protected function setSoftDelete()
+    {
+        $softDelete = $this->config["database.softDelete"];
+        $this->softDelete = $softDelete["enabled"] ?? false;
+        $this->delCol = $softDelete["column"] ?? "";
+        $this->delValType = $softDelete["value"] ?? 0;
     }
 }
