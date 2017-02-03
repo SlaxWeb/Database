@@ -406,7 +406,6 @@ abstract class BaseModel
      * @param string $primKey Key of the main table for the condition
      * @param string $forKey Key of the joining table
      * @param string $cOpr Comparison operator for the two keys
-     * @param string $lOpr Logical operator for multiple JOIN conditions
      * @return self
      */
     public function joinCond(string $primKey, string $forKey, string $cOpr = "="): self
@@ -423,7 +422,6 @@ abstract class BaseModel
      * @param string $primKey Key of the main table for the condition
      * @param string $forKey Key of the joining table
      * @param string $cOpr Comparison operator for the two keys
-     * @param string $lOpr Logical operator for multiple JOIN conditions
      * @return self
      */
     public function orJoinCond(string $primKey, string $forKey, string $cOpr = "="): self
