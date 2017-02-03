@@ -66,6 +66,13 @@ abstract class BaseModel
     public $table = "";
 
     /**
+     * Primary Key Column
+     *
+     * @var string
+     */
+    protected $primKey = "";
+
+    /**
      * Logger object
      *
      * @var \Psr\Log\LoggerInterface
@@ -177,6 +184,18 @@ abstract class BaseModel
         $this->logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
         $this->invokeCallback("init", self::CALLBACK_AFTER);
+    }
+
+    /**
+     * Get Primary Key
+     *
+     * Gets the primary key column name of the model.
+     *
+     * @return string
+     */
+    public function getPrimKey(): string
+    {
+        return $this->primKey;
     }
 
     /**
