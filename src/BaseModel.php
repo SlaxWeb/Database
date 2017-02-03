@@ -352,12 +352,13 @@ abstract class BaseModel
      * a table is added without a condition with the 'joinCond', an exception will
      * be thrown when an attempt to create a query is made.
      *
+     * @param string $table Table name to which the join is to be made
      * @param string $type Join type, default string("INNER JOIN")
      * @return self
      */
-    public function join(string $type = "INNER JOIN"): self
+    public function join(string $table, string $type = "INNER JOIN"): self
     {
-        $this->db->join($this->table, $type);
+        $this->db->join($table, $type);
         return $this;
     }
 
