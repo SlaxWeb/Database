@@ -43,6 +43,10 @@ class Provider implements \Pimple\ServiceProviderInterface
 
         $container["loadDBModel.service"] = $container->protect(
             function (string $model) use ($container) {
+                $cacheName = "loadDBModel.service-{$model}";
+                if (isset($app[$cacheName])) {
+                    return $app[$cacheName];
+                }
                 $class = rtrim($container["config.service"]["database.classNamespace"], "\\")
                     . "\\"
                     . str_replace("/", "\\", $model);
@@ -59,7 +63,7 @@ class Provider implements \Pimple\ServiceProviderInterface
                     $model->init(...$args);
                 }
 
-                return $model;
+                return $app[$cacheName] = $model;
             }
         );
     }

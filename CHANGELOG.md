@@ -6,6 +6,8 @@ Changes between versions
 
 * Soft deletion
 * Model joining
+* Save new model object to app properties in service provider and return it on next
+call
 
 ## v0.4
 
