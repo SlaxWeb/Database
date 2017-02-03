@@ -417,6 +417,36 @@ abstract class BaseModel
     }
 
     /**
+     * Model Join
+     *
+     * Construct a join statement from a model object. The method automatically
+     * obtains the primary key column name from the joining model, construcing a
+     * basic join statement for that models table automagically. If the joining
+     * model does not have a primary key column name set an exception is thrown.
+     *
+     * @param \SlaxWeb\Database\BaseModel $model Joining model instance
+     * @param string $forKey Foreign key against which the joining models primary key is matched
+     * @param string $type Join type, default string("INNER JOIN")
+     * @param string $cOpr Comparison operator for the two keys
+     * @return self
+     *
+     * @exceptions \SlaxWeb\Database\Exception\NoPrimKeyException
+     */
+    public function joinModel(
+        BaseModel $model,
+        string $forKey,
+        string $type = "INNER JOIN",
+        string $cOpr = "="
+    ): self {
+        $primKey = $model->getPrimKey();
+        if (empty($primKey)) {
+            throw new Exception\NoPrimKeyException;
+        }
+
+        return $this->join($model->table, $type)->joinCond($primKey, $forKey, $cOpr);
+    }
+
+    /**
      * Add join condition
      *
      * Adds a JOIN condition to the last join added. If no join was yet added, an
