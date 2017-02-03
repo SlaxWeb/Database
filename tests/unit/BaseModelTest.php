@@ -444,4 +444,57 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
         $this->assertTrue($model->delete());
     }
+
+    /**
+     * Test model joining
+     *
+     * Ensure that a proper join statement is constructed with the model joining
+     * technique.
+     *
+     * @return void
+     */
+    public function testModelJoin()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(["join", "joinCond"])
+            ->getMock();
+
+        $joinModel = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(["getPrimKey"])
+            ->getMock();
+
+        $model->expects($this->once())
+            ->method("join")
+            ->with("JoinTable", "LEFT OUTTER JOIN")
+            ->willReturn($model);
+
+        $model->expects($this->once())
+            ->method("joinCond")
+            ->with("id", "joinModel_id", "=")
+            ->willReturn($model);
+
+        $joinModel->expects($this->exactly(2))
+            ->method("getPrimKey")
+            ->will($this->onConsecutiveCalls("", "id"));
+
+        $model->table = "TestTable";
+        $joinModel->table = "JoinTable";
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $joinModel->__construct($this->logger, $this->config, $this->inflector, $this->db);
+
+        $exception = false;
+        try {
+            $model->joinModel($joinModel, "joinModel_id", "=");
+        } catch (\Throwable $e) {
+            $exception = $e;
+        }
+        $this->assertInstanceOf(
+            \SlaxWeb\Database\Exception\NoPrimKeyException::class,
+            $exception
+        );
+
+        $model->joinModel($joinModel, "joinModel_id", "LEFT OUTTER JOIN", "=");
+    }
 }
