@@ -38,7 +38,6 @@ class Error
      *
      * @param string $message Error message
      * @param string $query Query at which the error occured
-     * @return void
      */
     public function __construct(string $message, string $query)
     {

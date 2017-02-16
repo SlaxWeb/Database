@@ -32,7 +32,7 @@ class Provider implements \Pimple\ServiceProviderInterface
     {
         // loadModel.service is deprecated, log a warning and call 'loadDBModel.service'
         $container["loadModel.service"] = $container->protect(
-            function (string $model) use ($container) {
+            function () use ($container) {
                 $container["logger.service"]->warning(
                     "'loadModel.service' is deprecated and will be removed in future releases."
                     . "Use 'loadDBModel.service' instead."
@@ -44,8 +44,8 @@ class Provider implements \Pimple\ServiceProviderInterface
         $container["loadDBModel.service"] = $container->protect(
             function (string $model) use ($container) {
                 $cacheName = "loadDBModel.service-{$model}";
-                if (isset($app[$cacheName])) {
-                    return $app[$cacheName];
+                if (isset($container[$cacheName])) {
+                    return $container[$cacheName];
                 }
                 $class = rtrim($container["config.service"]["database.classNamespace"], "\\")
                     . "\\"
@@ -63,7 +63,7 @@ class Provider implements \Pimple\ServiceProviderInterface
                     $model->init(...$args);
                 }
 
-                return $app[$cacheName] = $model;
+                return $container[$cacheName] = $model;
             }
         );
     }

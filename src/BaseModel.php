@@ -165,7 +165,6 @@ abstract class BaseModel
      * @param \SlaxWeb\Config\Container $config Configuration container object
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
      * @param \SlaxWeb\Database\Interface\Library $db Database library object
-     * @return void
      */
     public function __construct(Logger $logger, Config $config, Inflector $inflector, Database $db)
     {
@@ -475,7 +474,7 @@ abstract class BaseModel
      */
     public function orJoinCond(string $primKey, string $forKey, string $cOpr = "="): self
     {
-        $this->db->joinCond($primKey, $forKey, $cOpr, "OR");
+        $this->db->orJoinCond($primKey, $forKey, $cOpr);
         return $this;
     }
 

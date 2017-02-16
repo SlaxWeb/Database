@@ -178,7 +178,6 @@ interface Library
      * @param string $primKey Key of the main table for the condition
      * @param string $forKey Key of the joining table
      * @param string $cOpr Comparison operator for the two keys
-     * @param string $lOpr Logical operator for multiple JOIN conditions
      * @return void
      */
     public function joinCond(string $primKey, string $forKey, string $cOpr = "=");
@@ -191,7 +190,6 @@ interface Library
      * @param string $primKey Key of the main table for the condition
      * @param string $forKey Key of the joining table
      * @param string $cOpr Comparison operator for the two keys
-     * @param string $lOpr Logical operator for multiple JOIN conditions
      * @return void
      */
     public function orJoinCond(string $primKey, string $forKey, string $cOpr = "=");
