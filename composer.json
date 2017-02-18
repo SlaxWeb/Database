@@ -10,7 +10,7 @@
     ],
     "require": {
         "php":  ">=7.0.0",
-        "slaxweb/logger": "~0.3",
+        "slaxweb/logger": "~0.4",
         "slaxweb/config": "~0.2",
         "slaxweb/getset": "~0.1",
         "icanboogie/inflector": "~1.4"
