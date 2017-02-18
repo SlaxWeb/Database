@@ -4,6 +4,10 @@ Changes between versions
 
 ## Current changes
 
+## v0.5
+
+### v0.5.0
+
 * Soft deletion
 * Model joining
 * Save new model object to app properties in service provider and return it on next
