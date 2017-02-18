@@ -14,7 +14,7 @@
     ],
     "subcomponents": {
         "list": {
-            "database-pdo": "~0.4"
+            "database-pdo": "~0.5"
         },
         "required": true,
         "multi": false
