@@ -129,6 +129,34 @@ abstract class BaseModel
     protected $delValType = 0;
 
     /**
+     * Timestamps
+     *
+     * @var bool
+     */
+    protected $timestamps = null;
+
+    /**
+     * Created column
+     *
+     * @var string
+     */
+    protected $createdColumn = "";
+
+    /**
+     * Updated column
+     *
+     * @var string
+     */
+    protected $updatedColumn = "";
+
+    /**
+     * Timestamp function
+     *
+     * @var string
+     */
+    protected $timestampFunction = "";
+
+    /**
      * Callback definitions
      *
      * List of callbacks:
@@ -179,6 +207,7 @@ abstract class BaseModel
             $this->setTable();
         }
         $this->setSoftDelete();
+        $this->setTimestampConfig();
 
         $this->logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
@@ -631,5 +660,24 @@ abstract class BaseModel
         $this->softDelete = $softDelete["enabled"] ?? false;
         $this->delCol = $softDelete["column"] ?? "";
         $this->delValType = $softDelete["value"] ?? 0;
+    }
+
+    /**
+     * Set Timestamp Config
+     *
+     * Sets the timestamp configuration to the class properties. Any previously
+     * user set values to the configuration properties are not overwritten.
+     *
+     * @return void
+     */
+    protected function setTimestampConfig()
+    {
+        $timestamp = $this->config["database.timestamp"];
+        $this->timestamps = $this->timestamps === null
+            ? ($timestamp["enabled"] ?? false)
+            : $this->timestamps;
+        $this->createdColumn = $this->createdColumn ?: ($timestamp["createdColumn"] ?? "created_at");
+        $this->updatedColumn = $this->updatedColumn ?: ($timestamp["updatedColumn"] ?? "updated_at");
+        $this->timestampFunction = $this->timestampFunction ?: ($timestamp["function"] ?? "NOW()");
     }
 }

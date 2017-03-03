@@ -100,7 +100,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
     {
         $model = $this->getMockBuilder(BaseModel::class)
             ->disableOriginalConstructor()
-            ->setMethods(["setSoftDelete"])
+            ->setMethods(["setSoftDelete", "setTimestampConfig"])
             ->setMockClassName("Test")
             ->getMock();
 
@@ -413,7 +413,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
     {
         $model = $this->getMockBuilder(BaseModel::class)
             ->disableOriginalConstructor()
-            ->setMethods(["update"])
+            ->setMethods(["update", "setTimestampConfig"])
             ->getMock();
 
         $model->expects($this->exactly(2))
