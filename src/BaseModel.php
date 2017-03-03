@@ -291,6 +291,10 @@ abstract class BaseModel
     {
         $this->invokeCallback("update");
 
+        if ($this->timestamps) {
+            $columns[$this->updatedColumn] = ["func" => $this->timestampFunction];
+        }
+
         if (($status = $this->db->update($this->table, $columns)) === false) {
             $this->error = $this->db->lastError();
         }
