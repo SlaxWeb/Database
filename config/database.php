@@ -59,6 +59,21 @@ $configuration["softDelete"] = [
 ];
 
 /*
+ * Automatic timestamps
+ *
+ * The BaseModel offers automatic timestamping for newly created or updated rows.
+ * By default this is disabled and has to be enabled here.
+ * Along with enabling you have the option to set the column names for the 'created'
+ * and 'updated' timestamps, as well as the function to be executed in the query.
+ */
+$configuration["timestamp"] = [
+    "enabled"   =>  false,
+    "createdColumn" =>  "created_at",
+    "updatedColumn" =>  "updated_at",
+    "function"      =>  "NOW()"
+];
+
+/*
  * Automatically set table name if not set before
  */
 $configuration["autoTable"] = true;
