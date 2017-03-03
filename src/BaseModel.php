@@ -240,6 +240,10 @@ abstract class BaseModel
     {
         $this->invokeCallback("create");
 
+        if ($this->timestamps) {
+            $data[$this->createdColumn] = ["func" => $this->timestampFunction];
+        }
+
         if (($status = $this->db->insert($this->table, $data)) === false) {
             $this->error = $this->db->lastError();
         }
