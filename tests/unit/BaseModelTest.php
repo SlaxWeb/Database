@@ -426,7 +426,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $this->config->expects($this->exactly(2))
             ->method("offsetGet")
             ->will(
-                $this->onConsecutiveCalls( [
+                $this->onConsecutiveCalls([
                     "enabled"   =>  true,
                     "column"    =>  "deleted",
                     "value"     =>  BaseModel::SDEL_VAL_BOOL
@@ -443,6 +443,47 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($model->delete());
         $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
         $this->assertTrue($model->delete());
+    }
+
+    /**
+     * Test timestamps
+     *
+     * Ensure that timestamping works when inserting and/or updating data in the
+     * database.
+     *
+     * @return void
+     */
+    public function testTimestamps()
+    {
+        $model = $this->getMockBuilder(BaseModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(["setSoftDelete"])
+            ->getMock();
+
+        $this->db->expects($this->once())
+            ->method("insert")
+            ->with("TestTable", ["foo" => "bar", "insCol" => ["func" => "FOO()"]])
+            ->willReturn(true);
+
+        $this->db->expects($this->once())
+            ->method("update")
+            ->with("TestTable", ["foo" => "baz", "updCol" => ["func" => "FOO()"]])
+            ->willReturn(true);
+
+        $this->config->expects($this->once())
+            ->method("offsetGet")
+            ->willReturn([
+                "enabled"   =>  true,
+                "createdColumn" =>  "insCol",
+                "updatedColumn" =>  "updCol",
+                "function"      =>  "FOO()"
+            ]);
+
+        $model->table = "TestTable";
+
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->db);
+        $model->create(["foo" => "bar"]);
+        $model->update(["foo" => "baz"]);
     }
 
     /**
