@@ -67,7 +67,7 @@ $configuration["softDelete"] = [
  * and 'updated' timestamps, as well as the function to be executed in the query.
  */
 $configuration["timestamp"] = [
-    "enabled"   =>  false,
+    "enabled"       =>  false,
     "createdColumn" =>  "created_at",
     "updatedColumn" =>  "updated_at",
     "function"      =>  "NOW()"
