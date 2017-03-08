@@ -4,6 +4,8 @@ Changes between versions
 
 ## Current changes
 
+* add connection timeout configuration option
+
 ## v0.5
 
 ### v0.5.0
