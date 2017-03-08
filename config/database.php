@@ -37,7 +37,8 @@ $configuration["connection"] = [
     "port"      =>  0,
     "database"  =>  "",
     "username"  =>  "",
-    "password"  =>  ""
+    "password"  =>  "",
+    "timeout"   =>  10
 ];
 
 /*
