@@ -368,7 +368,7 @@ abstract class BaseModel
      */
     public function where(string $column, $value, string $opr = "="): self
     {
-        $this->db->where($column, $value, $opr);
+        $this->qBuilder->where($column, $value, $opr, "AND");
         return $this;
     }
 
@@ -385,7 +385,7 @@ abstract class BaseModel
      */
     public function orWhere(string $column, $value, string $opr = "="): self
     {
-        $this->db->where($column, $value, $opr, "OR");
+        $this->qBuilder->where($column, $value, $opr, "OR");
         return $this;
     }
 
@@ -402,7 +402,7 @@ abstract class BaseModel
      */
     public function groupWhere(\Closure $predicates): self
     {
-        $this->db->groupWhere($predicates);
+        $this->qBuilder->groupWhere($predicates, "AND");
         return $this;
     }
 
@@ -417,7 +417,7 @@ abstract class BaseModel
      */
     public function orGroupWhere(\Closure $predicates): self
     {
-        $this->db->groupWhere($predicates, "OR");
+        $this->qBuilder->groupWhere($predicates, "OR");
         return $this;
     }
 
@@ -436,7 +436,7 @@ abstract class BaseModel
         \Closure $nested,
         string $lOpr = "IN"
     ): self {
-        $this->db->nestedWhere($column, $nested, $lOpr);
+        $this->qBuilder->nestedWhere($column, $nested, $lOpr, "AND");
         return $this;
     }
 
@@ -456,7 +456,7 @@ abstract class BaseModel
         \Closure $nested,
         string $lOpr = "IN"
     ): self {
-        $this->db->nestedWhere($column, $nested, $lOpr, "OR");
+        $this->qBuilder->nestedWhere($column, $nested, $lOpr, "OR");
         return $this;
     }
 
@@ -473,7 +473,7 @@ abstract class BaseModel
      */
     public function join(string $table, string $type = "INNER JOIN"): self
     {
-        $this->db->join($table, $type);
+        $this->qBuilder->join($table, $type);
         return $this;
     }
 
@@ -520,7 +520,7 @@ abstract class BaseModel
      */
     public function joinCond(string $primKey, string $forKey, string $cOpr = "="): self
     {
-        $this->db->joinCond($primKey, $forKey, $cOpr);
+        $this->qBuilder->joinCond($primKey, $forKey, $cOpr, "AND");
         return $this;
     }
 
@@ -536,7 +536,7 @@ abstract class BaseModel
      */
     public function orJoinCond(string $primKey, string $forKey, string $cOpr = "="): self
     {
-        $this->db->orJoinCond($primKey, $forKey, $cOpr);
+        $this->qBuilder->orJoinCond($primKey, $forKey, $cOpr, "OR");
         return $this;
     }
 
@@ -552,7 +552,7 @@ abstract class BaseModel
      */
     public function joinCols(array $cols): self
     {
-        $this->db->joinCols($cols);
+        $this->qBuilder->joinCols($cols);
         return $this;
     }
 
@@ -566,7 +566,7 @@ abstract class BaseModel
      */
     public function groupBy(string $col): self
     {
-        $this->db->groupBy($col);
+        $this->qBuilder->groupBy($col);
         return $this;
     }
 
@@ -582,7 +582,7 @@ abstract class BaseModel
      */
     public function orderBy(string $col, string $direction = "ASC", string $func = ""): self
     {
-        $this->db->orderBy($col, $direction, $func);
+        $this->qBuilder->orderBy($col, $direction, $func);
         return $this;
     }
 
@@ -598,7 +598,7 @@ abstract class BaseModel
      */
     public function limit(int $limit, int $offset = 0): self
     {
-        $this->db->limit($limit, $offset);
+        $this->qBuilder->limit($limit, $offset);
         return $this;
     }
 
