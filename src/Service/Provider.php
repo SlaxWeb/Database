@@ -54,6 +54,7 @@ class Provider implements \Pimple\ServiceProviderInterface
                     $container["logger.service"](),
                     $container["config.service"],
                     \ICanBoogie\Inflector::get(),
+                    $container["queryBuilder.service"],
                     $container["databaseLibrary.service"]
                 );
 
@@ -66,5 +67,9 @@ class Provider implements \Pimple\ServiceProviderInterface
                 return $container[$cacheName] = $model;
             }
         );
+
+        $container["queryBuilder.service"] = function() {
+            return new \SlaxWeb\Database\Query\Builder;
+        };
     }
 }
