@@ -214,6 +214,7 @@ abstract class BaseModel
         $this->logger = $logger;
         $this->config = $config;
         $this->inflector = $inflector;
+        $this->qBuilder = $queryBuilder;
         $this->db = $db;
 
         if ($this->table === "" && $this->config["database.autoTable"]) {
@@ -257,9 +258,11 @@ abstract class BaseModel
             $data[$this->createdColumn] = ["func" => $this->timestampFunction];
         }
 
-        if (($status = $this->db->insert($this->table, $data)) === false) {
+        $query = $this->qBuilder->table($this->table)->insert($data);
+        if (($status = $this->db->execute($query, $this->qBuilder->getParams())) === false) {
             $this->error = $this->db->lastError();
         }
+        $this->qBuilder->reset();
 
         $this->invokeCallback("create", self::CALLBACK_AFTER);
         return $status;
@@ -283,7 +286,10 @@ abstract class BaseModel
     {
         $this->invokeCallback("read");
 
-        $this->result = $this->db->select($this->table, $columns);
+        $query = $this->qBuilder->table($this->table)->select($columns);
+        $this->db->execute($query, $this->qBuilder->getParams());
+        $this->result = $this->db->fetch();
+        $this->qBuilder->reset();
 
         $this->invokeCallback("read", self::CALLBACK_AFTER);
         return $this->result;
@@ -308,9 +314,11 @@ abstract class BaseModel
             $columns[$this->updatedColumn] = ["func" => $this->timestampFunction];
         }
 
-        if (($status = $this->db->update($this->table, $columns)) === false) {
+        $query = $this->qBuilder->table($this->table)->update($columns);
+        if (($status = $this->db->execute($query, $this->qBuilder->getParams())) === false) {
             $this->error = $this->db->lastError();
         }
+        $this->qBuilder->reset();
 
         $this->invokeCallback("update", self::CALLBACK_AFTER);
         return $status;
@@ -333,9 +341,13 @@ abstract class BaseModel
                 ? ["func" => "NOW()"]
                 : true;
             $status = $this->update([$this->delCol => $val]);
-        } elseif (($status = $this->db->delete($this->table)) === false) {
+        }
+
+        $query = $this->qBuilder->table($this->table)->delete();
+        if (($status = $this->db->execute($query)) === false) {
             $this->error = $this->db->lastError();
         }
+        $this->qBuilder->reset();
 
         $this->invokeCallback("delete", self::CALLBACK_AFTER);
         return $status;
