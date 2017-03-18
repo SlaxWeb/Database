@@ -94,6 +94,13 @@ abstract class BaseModel
     protected $inflector = null;
 
     /**
+     * Query Builder
+     *
+     * @var \SlaxWeb\Database\Query\Builder
+     */
+    protected $qBuilder = null;
+
+    /**
      * Database Library
      *
      * @var \SlaxWeb\Database\Interfaces\Library
@@ -192,10 +199,16 @@ abstract class BaseModel
      * @param \Psr\Log\LoggerInterface $logger PSR-7 compliant logger object
      * @param \SlaxWeb\Config\Container $config Configuration container object
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
+     * @param \SlaxWeb\Database\Query\Builder $queryBuilder Query Builder instance
      * @param \SlaxWeb\Database\Interface\Library $db Database library object
      */
-    public function __construct(Logger $logger, Config $config, Inflector $inflector, Database $db)
-    {
+    public function __construct(
+        Logger $logger,
+        Config $config,
+        Inflector $inflector,
+        Builder $queryBuilder,
+        Database $db
+    ) {
         $this->invokeCallback("init");
 
         $this->logger = $logger;
