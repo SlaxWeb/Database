@@ -537,7 +537,7 @@ abstract class BaseModel
      */
     public function orJoinCond(string $primKey, string $forKey, string $cOpr = "="): self
     {
-        $this->qBuilder->orJoinCond($primKey, $forKey, $cOpr, "OR");
+        $this->qBuilder->joinCond($primKey, $forKey, $cOpr, "OR");
         return $this;
     }
 
