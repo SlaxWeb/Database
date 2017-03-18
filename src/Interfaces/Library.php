@@ -47,7 +47,7 @@ interface Library
      * @param array $data Data to be bound into the Query
      * @return bool
      */
-    public function execute(string $query, array $data): bool;
+    public function execute(string $query, array $data = []): bool;
 
     /**
      * Fetch Results
