@@ -18,6 +18,7 @@ namespace SlaxWeb\Database;
 
 use ICanBoogie\Inflector;
 use SlaxWeb\Database\Error;
+use SlaxWeb\Database\Query\Builder;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
 use SlaxWeb\Database\Exception\QueryException;
@@ -341,13 +342,13 @@ abstract class BaseModel
                 ? ["func" => "NOW()"]
                 : true;
             $status = $this->update([$this->delCol => $val]);
+        } else {
+            $query = $this->qBuilder->table($this->table)->delete();
+            if (($status = $this->db->execute($query)) === false) {
+                $this->error = $this->db->lastError();
+            }
+            $this->qBuilder->reset();
         }
-
-        $query = $this->qBuilder->table($this->table)->delete();
-        if (($status = $this->db->execute($query)) === false) {
-            $this->error = $this->db->lastError();
-        }
-        $this->qBuilder->reset();
 
         $this->invokeCallback("delete", self::CALLBACK_AFTER);
         return $status;
