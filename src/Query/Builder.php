@@ -148,6 +148,18 @@ class Builder
     }
 
     /**
+     * Get predicates
+     *
+     * Returns the main group of predicates.
+     *
+     * @return \SlaxWeb\Database\Query\Where\Group
+     */
+    public function getPredicates(): \SlaxWeb\Database\Query\Where\Group
+    {
+        return $this->predicates;
+    }
+
+    /**
      * Get Bind Parameters
      *
      * Returns the parameters prepared for binding into the prepared statement.
