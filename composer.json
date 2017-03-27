@@ -10,6 +10,7 @@
     ],
     "require": {
         "php":  ">=7.0.0",
+        "slaxweb/hooks": "dev-master",
         "slaxweb/logger": "~0.4",
         "slaxweb/config": "~0.2",
         "slaxweb/getset": "~0.1",
