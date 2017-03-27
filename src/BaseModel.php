@@ -23,6 +23,7 @@ use SlaxWeb\Config\Container as Config;
 use SlaxWeb\Database\Exception\QueryException;
 use SlaxWeb\Database\Interfaces\Library as Database;
 use SlaxWeb\Database\Interfaces\Result as ResultInterface;
+use SlaxWeb\Hooks\Container as Container;
 
 abstract class BaseModel
 {
@@ -38,10 +39,10 @@ abstract class BaseModel
     const TBL_NAME_LOWERCASE = 5;
 
     /**
-     * Callback invokation type
+     * Hook invokation type
      */
-    const CALLBACK_BEFORE = true;
-    const CALLBACK_AFTER = false;
+    const HOOK_BEFORE = true;
+    const HOOK_AFTER = false;
 
     /**
      * Join types
@@ -157,33 +158,18 @@ abstract class BaseModel
     protected $timestampFunction = "";
 
     /**
-     * Callback definitions
+     * Hooks Container
      *
-     * List of callbacks:
-     * - beforeInit
-     * - afterInit
-     * - beforeCreate
-     * - afterCreate
-     * - beforeRead
-     * - afterRead
-     * - beforeUpdate
-     * - afterUpdate
-     * - beforeDelete
-     * - afterDelete
-     *
-     * @var array<callable>
+     * @var \SlaxWeb\Hooks\Container
      */
-    protected $beforeInit = [];
-    protected $afterInit = [];
-    protected $beforeCreate = [];
-    protected $afterCreate = [];
-    protected $beforeRead = [];
-    protected $afterRead = [];
-    protected $beforeUpdate = [];
-    protected $afterUpdate = [];
-    protected $beforeDelete = [];
-    protected $afterDelete = [];
+    protected $hooks = null;
 
+    /**
+     * Custom name for the hooks triggered in this or extended class.
+     * @var null
+     */
+    protected $hookName = null;
+    
     /**
      * Class constructor
      *
@@ -194,14 +180,20 @@ abstract class BaseModel
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
      * @param \SlaxWeb\Database\Interface\Library $db Database library object
      */
-    public function __construct(Logger $logger, Config $config, Inflector $inflector, Database $db)
-    {
-        $this->invokeCallback("init");
+    public function __construct(
+        Logger $logger, 
+        Config $config, 
+        Inflector $inflector, 
+        Database $db,
+        Container $hooks
+    ) {
+        $this->invokeHook("init");
 
         $this->logger = $logger;
         $this->config = $config;
         $this->inflector = $inflector;
         $this->db = $db;
+        $this->hooks = $hooks;
 
         if ($this->table === "" && $this->config["database.autoTable"]) {
             $this->setTable();
@@ -211,7 +203,7 @@ abstract class BaseModel
 
         $this->logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
-        $this->invokeCallback("init", self::CALLBACK_AFTER);
+        $this->invokeHook("init", self::HOOK_AFTER);
     }
 
     /**
@@ -238,7 +230,7 @@ abstract class BaseModel
      */
     public function create(array $data): bool
     {
-        $this->invokeCallback("create");
+        $this->invokeHook("create");
 
         if ($this->timestamps) {
             $data[$this->createdColumn] = ["func" => $this->timestampFunction];
@@ -248,7 +240,7 @@ abstract class BaseModel
             $this->error = $this->db->lastError();
         }
 
-        $this->invokeCallback("create", self::CALLBACK_AFTER);
+        $this->invokeHook("create", self::HOOK_AFTER);
         return $status;
     }
 
@@ -268,11 +260,11 @@ abstract class BaseModel
      */
     public function select(array $columns): ResultInterface
     {
-        $this->invokeCallback("read");
+        $this->invokeHook("read");
 
         $this->result = $this->db->select($this->table, $columns);
 
-        $this->invokeCallback("read", self::CALLBACK_AFTER);
+        $this->invokeHook("read", self::HOOK_AFTER);
         return $this->result;
     }
 
@@ -289,7 +281,7 @@ abstract class BaseModel
      */
     public function update(array $columns): bool
     {
-        $this->invokeCallback("update");
+        $this->invokeHook("update");
 
         if ($this->timestamps) {
             $columns[$this->updatedColumn] = ["func" => $this->timestampFunction];
@@ -299,7 +291,7 @@ abstract class BaseModel
             $this->error = $this->db->lastError();
         }
 
-        $this->invokeCallback("update", self::CALLBACK_AFTER);
+        $this->invokeHook("update", self::HOOK_AFTER);
         return $status;
     }
 
@@ -313,7 +305,7 @@ abstract class BaseModel
      */
     public function delete(): bool
     {
-        $this->invokeCallback("delete");
+        $this->invokeHook("delete");
 
         if ($this->softDelete) {
             $val = $this->delValType === self::SDEL_VAL_TIMESTAMP
@@ -324,7 +316,7 @@ abstract class BaseModel
             $this->error = $this->db->lastError();
         }
 
-        $this->invokeCallback("delete", self::CALLBACK_AFTER);
+        $this->invokeHook("delete", self::HOOK_AFTER);
         return $status;
     }
 
@@ -590,30 +582,35 @@ abstract class BaseModel
     }
 
     /**
-     * Invoke callback
+     * Invoke hook
      *
-     * Invokes the the callback in the order that they are stored in the callback
-     * array for a passed in callback type. All additional parameters are sent to
-     * the invoked callback.
+     * Invokes the hook specified by the name. The whole hook name consists of string model,
+     * class name or custom hook name stored in the private property hookName, before or after 
+     * concatenated with the modelMethod. Example: "model.user.before.init" for a user model.
      *
-     * @param string $name Name of the callback
-     * @param bool $before Invoke 'before' callables of '$name' callback, default self::CALLBACK_BEFORE
+     * @param string $modelMethod Model method name.
+     * @param bool $before Invoke 'before' '$modelMethod' hook, default self::HOOK_BEFORE
      * @return void
      */
-    protected function invokeCallback(string $name, bool $before = self::CALLBACK_BEFORE)
+    protected function invokeHook(string $modelMethod, bool $before = self::HOOK_BEFORE)
     {
-        $name = ($before ? "before" : "after") . ucfirst($name);
-        if (isset($this->{$name}) === false || is_array($this->{$name}) === false) {
-            // @todo: throw exception
-            return;
+        $clsName = $this->hookName;
+        if ($clsName === null) {
+            $clsName = $this->getClassName();
         }
-
-        $params = array_slice(func_get_args(), 2);
-        foreach ($this->{$name} as $callable) {
-            $callable(...$params);
-        }
+        $name = "model" . $clsName . ($before ? "before" : "after") . $modelMethod;
+        
+        $this->hooks->exec($name);
     }
 
+    /**
+     * Returns curent, lowercased class name without namespace.
+     * @return string Lowercased class name.
+     */
+    protected function getClassName() {
+        $splitedName = explode("\\", get_class($this));
+        return strtolower($splitedName[count($splitedName)-1]);
+    }
     /**
      * Set table name
      *
