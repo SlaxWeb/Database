@@ -20,10 +20,10 @@ use ICanBoogie\Inflector;
 use SlaxWeb\Database\Error;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
+use SlaxWeb\Hooks\Container as HooksContainer;
 use SlaxWeb\Database\Exception\QueryException;
 use SlaxWeb\Database\Interfaces\Library as Database;
 use SlaxWeb\Database\Interfaces\Result as ResultInterface;
-use SlaxWeb\Hooks\Container as Container;
 
 abstract class BaseModel
 {
@@ -41,8 +41,8 @@ abstract class BaseModel
     /**
      * Hook invokation type
      */
-    const HOOK_BEFORE = true;
-    const HOOK_AFTER = false;
+    const HOOK_BEFORE = "before";
+    const HOOK_AFTER = "after";
 
     /**
      * Join types
@@ -179,13 +179,14 @@ abstract class BaseModel
      * @param \SlaxWeb\Config\Container $config Configuration container object
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
      * @param \SlaxWeb\Database\Interface\Library $db Database library object
+     * @param SlaxWeb\Hooks\Container $hooks HooksContainer hooks container object
      */
     public function __construct(
         Logger $logger, 
         Config $config, 
         Inflector $inflector, 
         Database $db,
-        Container $hooks
+        HooksContainer $hooks
     ) {
         $this->invokeHook("init");
 
@@ -589,16 +590,13 @@ abstract class BaseModel
      * concatenated with the modelMethod. Example: "model.user.before.init" for a user model.
      *
      * @param string $modelMethod Model method name.
-     * @param bool $before Invoke 'before' '$modelMethod' hook, default self::HOOK_BEFORE
+     * @param string $before Invoke 'before' '$modelMethod' hook, default self::HOOK_BEFORE
      * @return void
      */
-    protected function invokeHook(string $modelMethod, bool $before = self::HOOK_BEFORE)
+    protected function invokeHook(string $modelMethod, string $before = self::HOOK_BEFORE)
     {
-        $clsName = $this->hookName;
-        if ($clsName === null) {
-            $clsName = $this->getClassName();
-        }
-        $name = "model" . $clsName . ($before ? "before" : "after") . $modelMethod;
+        $clsName = $this->hookName ?? $this->getClassName();
+        $name = sprintf("model.%s.%s.%s", $clsName, $before, $modelMethod);
         
         $this->hooks->exec($name);
     }
@@ -609,7 +607,7 @@ abstract class BaseModel
      */
     protected function getClassName() {
         $splitedName = explode("\\", get_class($this));
-        return strtolower($splitedName[count($splitedName)-1]);
+        return strtolower($splitedName[count($splitedName) - 1]);
     }
     /**
      * Set table name
