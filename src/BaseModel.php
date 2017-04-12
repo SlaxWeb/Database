@@ -169,7 +169,7 @@ abstract class BaseModel
      * @var null
      */
     protected $hookName = null;
-    
+
     /**
      * Class constructor
      *
@@ -179,12 +179,12 @@ abstract class BaseModel
      * @param \SlaxWeb\Config\Container $config Configuration container object
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
      * @param \SlaxWeb\Database\Interface\Library $db Database library object
-     * @param SlaxWeb\Hooks\Container $hooks HooksContainer hooks container object
+     * @param \SlaxWeb\Hooks\Container $hooks HooksContainer hooks container object
      */
     public function __construct(
-        Logger $logger, 
-        Config $config, 
-        Inflector $inflector, 
+        Logger $logger,
+        Config $config,
+        Inflector $inflector,
         Database $db,
         HooksContainer $hooks
     ) {
@@ -586,7 +586,7 @@ abstract class BaseModel
      * Invoke hook
      *
      * Invokes the hook specified by the name. The whole hook name consists of string model,
-     * class name or custom hook name stored in the private property hookName, before or after 
+     * class name or custom hook name stored in the private property hookName, before or after
      * concatenated with the modelMethod. Example: "model.user.before.init" for a user model.
      *
      * @param string $modelMethod Model method name.
@@ -596,8 +596,8 @@ abstract class BaseModel
     protected function invokeHook(string $modelMethod, string $before = self::HOOK_BEFORE)
     {
         $clsName = $this->hookName ?? $this->getClassName();
-        $name = sprintf("model.%s.%s.%s", $clsName, $before, $modelMethod);
-        
+        $name = "model.{$clsName}.{$before}.{$modelMethod}";
+
         $this->hooks->exec($name);
     }
 
