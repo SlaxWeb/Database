@@ -188,13 +188,14 @@ abstract class BaseModel
         Database $db,
         HooksContainer $hooks
     ) {
-        $this->invokeHook("init");
 
         $this->logger = $logger;
         $this->config = $config;
         $this->inflector = $inflector;
         $this->db = $db;
         $this->hooks = $hooks;
+        
+        $this->invokeHook("init");
 
         if ($this->table === "" && $this->config["database.autoTable"]) {
             $this->setTable();
