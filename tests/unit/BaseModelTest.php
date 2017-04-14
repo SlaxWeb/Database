@@ -16,6 +16,7 @@ namespace SlaxWeb\Database\Test\Unit;
 
 use ICanBoogie\Inflector;
 use SlaxWeb\Database\BaseModel;
+use SlaxWeb\Database\Query\Builder;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
 use SlaxWeb\Database\Interfaces\Result;
@@ -44,6 +45,13 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
      * @var InflectorMock
      */
     protected $inflector = null;
+
+    /**
+     * Query Builder
+     *
+     * @var BuilderMock
+     */
+    protected $builder = null;
 
     /**
      * Database Library
@@ -84,9 +92,14 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->setMockClassName("InflectorMock")
             ->getMock();
 
+        $this->builder = $this->getMockBuilder(Builder::class)
+            ->setMethods(["insert", "update", "delete", "select", "getParams"])
+            ->setMockClassName("BuilderMock")
+            ->getMock();
+
         $this->db = $this->getMockBuilder(Database::class)
             ->disableOriginalConstructor()
-            ->setMethods(["insert", "lastError"])
+            ->setMethods(["execute", "fetch", "lastError"])
             ->setMockClassName("DatabaseMock")
             ->getMockForAbstractClass();
 
@@ -200,7 +213,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         ];
         $model->table = "PreSetTable";
         foreach ($expectations as $exp) {
-            $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+            $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
             $this->assertEquals($exp, $model->table);
             $model->table = "";
         }
@@ -224,16 +237,25 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->setMockClassName("Test")
             ->getMock();
 
-        $this->db->expects($this->exactly(2))
+        $this->builder->expects($this->any())
             ->method("insert")
-            ->with("TestTable", $row)
+            ->with($row)
+            ->willReturn("insert statement");
+
+        $this->builder->expects($this->any())
+            ->method("getParams")
+            ->willReturn([]);
+
+        $this->db->expects($this->exactly(2))
+            ->method("execute")
+            ->with("insert statement", [])
             ->will($this->onConsecutiveCalls(true, false));
 
         $this->db->expects($this->once())
             ->method("lastError");
 
         $model->table = "TestTable";
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->create($row));
         $this->assertFalse($model->create($row));
     }
@@ -256,16 +278,25 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->setMockClassName("Test")
             ->getMock();
 
-        $this->db->expects($this->exactly(2))
+        $this->builder->expects($this->any())
             ->method("update")
-            ->with("TestTable", $row)
+            ->with($row)
+            ->willReturn("update statement");
+
+        $this->builder->expects($this->any())
+            ->method("getParams")
+            ->willReturn([]);
+
+        $this->db->expects($this->exactly(2))
+            ->method("execute")
+            ->with("update statement", [])
             ->will($this->onConsecutiveCalls(true, false));
 
         $this->db->expects($this->once())
             ->method("lastError");
 
         $model->table = "TestTable";
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->update($row));
         $this->assertFalse($model->update($row));
     }
@@ -286,16 +317,20 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->setMockClassName("Test")
             ->getMock();
 
-        $this->db->expects($this->exactly(2))
+        $this->builder->expects($this->any())
             ->method("delete")
-            ->with("TestTable")
+            ->willReturn("delete statement");
+
+        $this->db->expects($this->exactly(2))
+            ->method("execute")
+            ->with("delete statement")
             ->will($this->onConsecutiveCalls(true, false));
 
         $this->db->expects($this->once())
             ->method("lastError");
 
         $model->table = "TestTable";
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->delete());
         $this->assertFalse($model->delete());
     }
@@ -317,7 +352,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $model->table = "TestTable";
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
 
         try {
             $model->next();
@@ -346,13 +381,26 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->createMock(Result::class);
 
-        $this->db->expects($this->once())
+        $this->builder->expects($this->any())
             ->method("select")
-            ->with("TestTable", ["col1"])
+            ->with(["col1"])
+            ->willReturn("select statement");
+
+        $this->builder->expects($this->any())
+            ->method("getParams")
+            ->willReturn([]);
+
+        $this->db->expects($this->once())
+            ->method("execute")
+            ->with("select statement", [])
+            ->willReturn(true);
+
+        $this->db->expects($this->once())
+            ->method("fetch")
             ->willReturn($result);
 
         $model->table = "TestTable";
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertInstanceOf(Result::class, $model->select(["col1"]));
     }
 
@@ -396,13 +444,26 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
         $result->expects($this->once())
             ->method("get");
 
-        $this->db->expects($this->once())
+        $this->builder->expects($this->any())
             ->method("select")
-            ->with("TestTable", ["col1"])
+            ->with(["col1"])
+            ->willReturn("select statement");
+
+        $this->builder->expects($this->any())
+            ->method("getParams")
+            ->willReturn([]);
+
+        $this->db->expects($this->once())
+            ->method("execute")
+            ->with("select statement", [])
+            ->willReturn(true);
+
+        $this->db->expects($this->once())
+            ->method("fetch")
             ->willReturn($result);
 
         $model->table = "TestTable";
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $model->select(["col1"]);
 
         $model->col1;
@@ -452,9 +513,9 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $model->table = "TestTable";
 
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->delete());
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->delete());
     }
 
@@ -473,14 +534,14 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->setMethods(["setSoftDelete"])
             ->getMock();
 
-        $this->db->expects($this->once())
+        $this->builder->expects($this->once())
             ->method("insert")
-            ->with("TestTable", ["foo" => "bar", "insCol" => ["func" => "FOO()"]])
+            ->with(["foo" => "bar", "insCol" => ["func" => "FOO()"]])
             ->willReturn(true);
 
-        $this->db->expects($this->once())
+        $this->builder->expects($this->once())
             ->method("update")
-            ->with("TestTable", ["foo" => "baz", "updCol" => ["func" => "FOO()"]])
+            ->with(["foo" => "baz", "updCol" => ["func" => "FOO()"]])
             ->willReturn(true);
 
         $this->config->expects($this->once())
@@ -494,7 +555,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $model->table = "TestTable";
 
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $model->create(["foo" => "bar"]);
         $model->update(["foo" => "baz"]);
     }
@@ -535,8 +596,8 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $model->table = "TestTable";
         $joinModel->table = "JoinTable";
-        $model->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
-        $joinModel->__construct($this->logger, $this->config, $this->inflector, $this->db, $this->hooks);
+        $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
+        $joinModel->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
 
         $exception = false;
         try {

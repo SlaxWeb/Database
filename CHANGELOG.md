@@ -5,6 +5,7 @@ Changes between versions
 ## Current changes
 
 * add connection timeout configuration option
+* add query builder to the main database component
 
 ## v0.5
 

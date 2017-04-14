@@ -18,6 +18,7 @@ namespace SlaxWeb\Database;
 
 use ICanBoogie\Inflector;
 use SlaxWeb\Database\Error;
+use SlaxWeb\Database\Query\Builder;
 use Psr\Log\LoggerInterface as Logger;
 use SlaxWeb\Config\Container as Config;
 use SlaxWeb\Hooks\Container as HooksContainer;
@@ -93,6 +94,13 @@ abstract class BaseModel
      * @var \ICanBoogie\Inflector
      */
     protected $inflector = null;
+
+    /**
+     * Query Builder
+     *
+     * @var \SlaxWeb\Database\Query\Builder
+     */
+    protected $qBuilder = null;
 
     /**
      * Database Library
@@ -178,6 +186,7 @@ abstract class BaseModel
      * @param \Psr\Log\LoggerInterface $logger PSR-7 compliant logger object
      * @param \SlaxWeb\Config\Container $config Configuration container object
      * @param \ICanBoogie\Inflector $inflector Inflector object for pluralization and word transformations
+     * @param \SlaxWeb\Database\Query\Builder $queryBuilder Query Builder instance
      * @param \SlaxWeb\Database\Interface\Library $db Database library object
      * @param \SlaxWeb\Hooks\Container $hooks HooksContainer hooks container object
      */
@@ -185,6 +194,7 @@ abstract class BaseModel
         Logger $logger,
         Config $config,
         Inflector $inflector,
+        Builder $queryBuilder,
         Database $db,
         HooksContainer $hooks
     ) {
@@ -192,6 +202,7 @@ abstract class BaseModel
         $this->logger = $logger;
         $this->config = $config;
         $this->inflector = $inflector;
+        $this->qBuilder = $queryBuilder;
         $this->db = $db;
         $this->hooks = $hooks;
         
@@ -238,9 +249,11 @@ abstract class BaseModel
             $data[$this->createdColumn] = ["func" => $this->timestampFunction];
         }
 
-        if (($status = $this->db->insert($this->table, $data)) === false) {
+        $query = $this->qBuilder->table($this->table)->insert($data);
+        if (($status = $this->db->execute($query, $this->qBuilder->getParams())) === false) {
             $this->error = $this->db->lastError();
         }
+        $this->qBuilder->reset();
 
         $this->invokeHook("create", self::HOOK_AFTER);
         return $status;
@@ -264,7 +277,10 @@ abstract class BaseModel
     {
         $this->invokeHook("read");
 
-        $this->result = $this->db->select($this->table, $columns);
+        $query = $this->qBuilder->table($this->table)->select($columns);
+        $this->db->execute($query, $this->qBuilder->getParams());
+        $this->result = $this->db->fetch();
+        $this->qBuilder->reset();
 
         $this->invokeHook("read", self::HOOK_AFTER);
         return $this->result;
@@ -289,9 +305,11 @@ abstract class BaseModel
             $columns[$this->updatedColumn] = ["func" => $this->timestampFunction];
         }
 
-        if (($status = $this->db->update($this->table, $columns)) === false) {
+        $query = $this->qBuilder->table($this->table)->update($columns);
+        if (($status = $this->db->execute($query, $this->qBuilder->getParams())) === false) {
             $this->error = $this->db->lastError();
         }
+        $this->qBuilder->reset();
 
         $this->invokeHook("update", self::HOOK_AFTER);
         return $status;
@@ -314,8 +332,12 @@ abstract class BaseModel
                 ? ["func" => "NOW()"]
                 : true;
             $status = $this->update([$this->delCol => $val]);
-        } elseif (($status = $this->db->delete($this->table)) === false) {
-            $this->error = $this->db->lastError();
+        } else {
+            $query = $this->qBuilder->table($this->table)->delete();
+            if (($status = $this->db->execute($query)) === false) {
+                $this->error = $this->db->lastError();
+            }
+            $this->qBuilder->reset();
         }
 
         $this->invokeHook("delete", self::HOOK_AFTER);
@@ -337,7 +359,7 @@ abstract class BaseModel
      */
     public function where(string $column, $value, string $opr = "="): self
     {
-        $this->db->where($column, $value, $opr);
+        $this->qBuilder->where($column, $value, $opr, "AND");
         return $this;
     }
 
@@ -354,7 +376,7 @@ abstract class BaseModel
      */
     public function orWhere(string $column, $value, string $opr = "="): self
     {
-        $this->db->where($column, $value, $opr, "OR");
+        $this->qBuilder->where($column, $value, $opr, "OR");
         return $this;
     }
 
@@ -371,7 +393,7 @@ abstract class BaseModel
      */
     public function groupWhere(\Closure $predicates): self
     {
-        $this->db->groupWhere($predicates);
+        $this->qBuilder->groupWhere($predicates, "AND");
         return $this;
     }
 
@@ -386,7 +408,7 @@ abstract class BaseModel
      */
     public function orGroupWhere(\Closure $predicates): self
     {
-        $this->db->groupWhere($predicates, "OR");
+        $this->qBuilder->groupWhere($predicates, "OR");
         return $this;
     }
 
@@ -405,7 +427,7 @@ abstract class BaseModel
         \Closure $nested,
         string $lOpr = "IN"
     ): self {
-        $this->db->nestedWhere($column, $nested, $lOpr);
+        $this->qBuilder->nestedWhere($column, $nested, $lOpr, "AND");
         return $this;
     }
 
@@ -425,7 +447,7 @@ abstract class BaseModel
         \Closure $nested,
         string $lOpr = "IN"
     ): self {
-        $this->db->nestedWhere($column, $nested, $lOpr, "OR");
+        $this->qBuilder->nestedWhere($column, $nested, $lOpr, "OR");
         return $this;
     }
 
@@ -442,7 +464,7 @@ abstract class BaseModel
      */
     public function join(string $table, string $type = "INNER JOIN"): self
     {
-        $this->db->join($table, $type);
+        $this->qBuilder->join($table, $type);
         return $this;
     }
 
@@ -489,7 +511,7 @@ abstract class BaseModel
      */
     public function joinCond(string $primKey, string $forKey, string $cOpr = "="): self
     {
-        $this->db->joinCond($primKey, $forKey, $cOpr);
+        $this->qBuilder->joinCond($primKey, $forKey, $cOpr, "AND");
         return $this;
     }
 
@@ -505,7 +527,7 @@ abstract class BaseModel
      */
     public function orJoinCond(string $primKey, string $forKey, string $cOpr = "="): self
     {
-        $this->db->orJoinCond($primKey, $forKey, $cOpr);
+        $this->qBuilder->joinCond($primKey, $forKey, $cOpr, "OR");
         return $this;
     }
 
@@ -521,7 +543,7 @@ abstract class BaseModel
      */
     public function joinCols(array $cols): self
     {
-        $this->db->joinCols($cols);
+        $this->qBuilder->joinCols($cols);
         return $this;
     }
 
@@ -535,7 +557,7 @@ abstract class BaseModel
      */
     public function groupBy(string $col): self
     {
-        $this->db->groupBy($col);
+        $this->qBuilder->groupBy($col);
         return $this;
     }
 
@@ -551,7 +573,7 @@ abstract class BaseModel
      */
     public function orderBy(string $col, string $direction = "ASC", string $func = ""): self
     {
-        $this->db->orderBy($col, $direction, $func);
+        $this->qBuilder->orderBy($col, $direction, $func);
         return $this;
     }
 
@@ -567,7 +589,7 @@ abstract class BaseModel
      */
     public function limit(int $limit, int $offset = 0): self
     {
-        $this->db->limit($limit, $offset);
+        $this->qBuilder->limit($limit, $offset);
         return $this;
     }
 
