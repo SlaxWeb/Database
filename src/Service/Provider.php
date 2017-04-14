@@ -55,7 +55,8 @@ class Provider implements \Pimple\ServiceProviderInterface
                     $container["config.service"],
                     \ICanBoogie\Inflector::get(),
                     $container["queryBuilder.service"],
-                    $container["databaseLibrary.service"]
+                    $container["databaseLibrary.service"],
+                    $container["hooks.service"]
                 );
 
                 if (method_exists($model, "init")) {
