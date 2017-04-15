@@ -6,6 +6,7 @@ Changes between versions
 
 * add connection timeout configuration option
 * add query builder to the main database component
+* base model callbacks are now handled through the hooks system
 
 ## v0.5
 
