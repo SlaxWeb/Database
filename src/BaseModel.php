@@ -275,14 +275,14 @@ abstract class BaseModel
      */
     public function select(array $columns): ResultInterface
     {
-        $this->invokeHook("read");
+        $this->invokeHook("select");
 
         $query = $this->qBuilder->table($this->table)->select($columns);
         $this->db->execute($query, $this->qBuilder->getParams());
         $this->result = $this->db->fetch();
         $this->qBuilder->reset();
 
-        $this->invokeHook("read", self::HOOK_AFTER);
+        $this->invokeHook("select", self::HOOK_AFTER);
         return $this->result;
     }
 
@@ -608,9 +608,10 @@ abstract class BaseModel
     /**
      * Invoke hook
      *
-     * Invokes the hook specified by the name. The whole hook name consists of string model,
-     * class name or custom hook name stored in the private property hookName, before or after
-     * concatenated with the modelMethod. Example: "model.user.before.init" for a user model.
+     * Invokes the hook specified by the name. The whole hook name consists of string
+     * model, class name or custom hook name stored in the protected property hookName,
+     * before or after concatenated with the modelMethod. Example: "model.user.before.init"
+     * for a user model.
      *
      * @param string $modelMethod Model method name.
      * @param string $before Invoke 'before' '$modelMethod' hook, default self::HOOK_BEFORE
