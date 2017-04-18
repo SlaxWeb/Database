@@ -116,15 +116,18 @@ class Group
             $table = $this->table;
         }
 
-        $where = " {$this->opr} (";
         $first = array_shift($this->list);
-        $where .= $first["predicate"]->convert($table);
+        $where = $first["predicate"]->convert($table);
         $this->params = array_merge($this->params, $first["predicate"]->getParams());
+
         foreach ($this->list as $predicate) {
             $where .= " {$predicate["opr"]} " . $predicate["predicate"]->convert($table);
             $this->params = array_merge($this->params, $predicate["predicate"]->getParams());
         }
-        return "{$where})";
+        if (!$first["predicate"] instanceof Group) {
+            $where = " {$this->opr} ({$where})";
+        }
+        return $where;
     }
 
     /**
