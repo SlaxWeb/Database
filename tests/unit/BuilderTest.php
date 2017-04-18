@@ -141,10 +141,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     public function testWhereGroupping()
     {
         $this->assertEquals(
-            "SELECT \"foos\".\"foo\" FROM \"foos\" WHERE 1=1 AND (\"foos\".\"bar\" = ? "
-            . "  AND (\"foos\".\"bar\" < ? OR \"foos\".\"baz\" > ?))",
+            "SELECT \"foos\".\"foo\" FROM \"foos\" WHERE 1=1 AND ("
+            . "(\"foos\".\"bar\" < ? OR \"foos\".\"baz\" > ?))",
             $this->builder
-                ->where("bar", "baz")
                 ->groupWhere(function ($builder) {
                     $builder->where("bar", 10, Predicate::OPR_LESS)
                         ->orWhere("baz", 1, Predicate::OPR_GRTR);
