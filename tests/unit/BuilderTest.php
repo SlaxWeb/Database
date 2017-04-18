@@ -177,14 +177,15 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     public function testNestedWhere()
     {
         $this->assertEquals(
-            "SELECT \"foos\".\"foo\" FROM \"foos\" WHERE 1=1 AND (\"foos\".\"bar\" = ? "
-            . "AND \"foos\".\"bar\" IN (SELECT \"bars\".\"bar\" FROM \"bars\" WHERE 1=1))",
+            "SELECT \"foos\".\"foo\" FROM \"foos\" WHERE 1=1 AND ("
+            . "\"foos\".\"bar\" IN (SELECT \"bars\".\"bar\" FROM \"bars\" WHERE 1=1) "
+            . "AND \"foos\".\"bar\" = ?)",
             $this->builder
-                ->where("bar", "baz")
                 ->nestedWhere("bar", function ($builder) {
                     return $builder->table("bars")
                         ->select(["bar"]);
-                })->select(["foo"])
+                })->where("bar", "baz")
+                ->select(["foo"])
         );
         $this->assertEquals(["baz"], $this->builder->getParams());
 
