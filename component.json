@@ -14,7 +14,7 @@
     ],
     "subcomponents": {
         "list": {
-            "database-pdo": "dev-release/0.6.0"
+            "database-pdo": "~0.6"
         },
         "required": true,
         "multi": false
