@@ -2,7 +2,16 @@
 
 Changes between versions
 
-## Current changes
+## v0.6
+
+### v0.6.1
+
+* throw an exception if an attempt to load a model without a name is made
+* move the model loader into a regular 'dbModelLoader.service' service to enable
+extending the loader - old 'loadDBModel.service' is still available as before, and
+should be used as before
+
+### v0.6.0
 
 * add connection timeout configuration option
 * add query builder to the main database component
