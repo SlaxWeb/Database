@@ -43,31 +43,43 @@ class Provider implements \Pimple\ServiceProviderInterface
 
         $container["loadDBModel.service"] = $container->protect(
             function(string $model) use ($container) {
-                $cacheName = "loadDBModel.service-{$model}";
-                if (isset($container[$cacheName])) {
-                    return $container[$cacheName];
-                }
-                $class = rtrim($container["config.service"]["database.classNamespace"], "\\")
-                    . "\\"
-                    . str_replace("/", "\\", $model);
-                $model = new $class(
-                    $container["logger.service"](),
-                    $container["config.service"],
-                    \ICanBoogie\Inflector::get(),
-                    $container["queryBuilder.service"],
-                    $container["databaseLibrary.service"],
-                    $container["hooks.service"]
-                );
-
-                if (method_exists($model, "init")) {
-                    $args = func_get_args();
-                    array_shift($args);
-                    $model->init(...$args);
-                }
-
-                return $container[$cacheName] = $model;
+                $container["__loadingModelName"] = $model;
+                $model = $container["dbModelLoader.service"];
+                $container["__loadingModelName"] = null;
+                return $model;
             }
         );
+
+        $container["dbModelLoader.service"] = function($container) {
+            $model = $container["__loadingModelName"] ?? "";
+            if ($model === "") {
+                throw new \SlaxWeb\Database\Exception\NoModelNameException;
+            }
+
+            $cacheName = "loadDBModel.service-{$model}";
+            if (isset($container[$cacheName])) {
+                return $container[$cacheName];
+            }
+            $class = rtrim($container["config.service"]["database.classNamespace"], "\\")
+                . "\\"
+                . str_replace("/", "\\", $model);
+            $model = new $class(
+                $container["logger.service"](),
+                $container["config.service"],
+                \ICanBoogie\Inflector::get(),
+                $container["queryBuilder.service"],
+                $container["databaseLibrary.service"],
+                $container["hooks.service"]
+            );
+
+            if (method_exists($model, "init")) {
+                $args = func_get_args();
+                array_shift($args);
+                $model->init(...$args);
+            }
+
+            return $container[$cacheName] = $model;
+        };
 
         $container["queryBuilder.service"] = function() {
             return new \SlaxWeb\Database\Query\Builder;
