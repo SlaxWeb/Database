@@ -37,6 +37,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
         $group->where("baz", "qux");
 
         $this->assertEquals(" AND (\"foos\".\"foo\" = ? AND \"foos\".\"baz\" = ?)", $group->convert());
+        $this->assertEquals(" AND (\"foos\".\"foo\" = ? AND \"foos\".\"baz\" = ?)", $group->convert());
 
         $group = new Group("OR");
         $group->setDelim("\"\"");
