@@ -32,7 +32,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     {
         $this->builder = new Builder;
         // statically set delimiter and table name for all test
-        $this->builder->setDelim("\"")->table("foos");
+        $this->builder->setDelim("\"\"")->table("foos");
     }
 
     protected function tearDown()

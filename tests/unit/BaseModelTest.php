@@ -212,6 +212,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             "test"
         ];
         $model->table = "PreSetTable";
+        $model->setDelim("\"");
         foreach ($expectations as $exp) {
             $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
             $this->assertEquals($exp, $model->table);
@@ -255,6 +256,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->method("lastError");
 
         $model->table = "TestTable";
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->create($row));
         $this->assertFalse($model->create($row));
@@ -296,6 +298,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->method("lastError");
 
         $model->table = "TestTable";
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->update($row));
         $this->assertFalse($model->update($row));
@@ -330,6 +333,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->method("lastError");
 
         $model->table = "TestTable";
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->delete());
         $this->assertFalse($model->delete());
@@ -352,6 +356,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $model->table = "TestTable";
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
 
         try {
@@ -400,6 +405,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->willReturn($result);
 
         $model->table = "TestTable";
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertInstanceOf(Result::class, $model->select(["col1"]));
     }
@@ -463,6 +469,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ->willReturn($result);
 
         $model->table = "TestTable";
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $model->select(["col1"]);
 
@@ -513,6 +520,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $model->table = "TestTable";
 
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $this->assertTrue($model->delete());
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
@@ -554,7 +562,7 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $model->table = "TestTable";
-
+        $model->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $model->create(["foo" => "bar"]);
         $model->update(["foo" => "baz"]);
@@ -596,6 +604,8 @@ class BaseModelTest extends \PHPUnit_Framework_TestCase
 
         $model->table = "TestTable";
         $joinModel->table = "JoinTable";
+        $model->setDelim("\"");
+        $joinModel->setDelim("\"");
         $model->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
         $joinModel->__construct($this->logger, $this->config, $this->inflector, $this->builder, $this->db, $this->hooks);
 

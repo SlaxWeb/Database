@@ -31,7 +31,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
     public function testConvert()
     {
         $group = new Group;
-        $group->setDelim("\"");
+        $group->setDelim("\"\"");
         $group->table("\"foos\"");
         $group->where("foo", "bar");
         $group->where("baz", "qux");
@@ -39,7 +39,7 @@ class GroupTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(" AND (\"foos\".\"foo\" = ? AND \"foos\".\"baz\" = ?)", $group->convert());
 
         $group = new Group("OR");
-        $group->setDelim("\"");
+        $group->setDelim("\"\"");
         $group->table("\"foos\"");
         $group->where("foo", "bar");
         $group->where("baz", "qux");
