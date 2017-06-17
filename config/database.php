@@ -106,3 +106,15 @@ $configuration["tableNameStyle"] = BaseModel::TBL_NAME_CAMEL_LCFIRST;
  * as well. If you fail to do so, the "Model Class Loader" will no longer work.
  */
 $configuration["classNamespace"] = "\\App\\Model\\";
+
+/*
+ * Object name delimiter override
+ *
+ * When creating a query, the database component attempts to automatically guess
+ * the correct object name delimiter based on the driver that is in use. Some databases
+ * allow the user to change the delimiter from the default, in that case, the delimiter
+ * has to be overriden here.
+ *
+ * Default: ""
+ */
+$configuration["delimiterOverride"] = "";
