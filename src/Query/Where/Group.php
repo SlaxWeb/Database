@@ -54,6 +54,13 @@ class Group
     protected $delim = "";
 
     /**
+     * Built predicates
+     *
+     * @var string
+     */
+    protected $built = "";
+
+    /**
      * Class constructor
      *
      * Sets the logical operator that will be used to link this Predicate Group
@@ -108,8 +115,8 @@ class Group
      */
     public function convert(string $table = ""): string
     {
-        if (count($this->list) < 1) {
-            return "";
+        if ($this->built !== "" || count($this->list) < 1){
+            return $this->built;
         }
 
         if ($table === "") {
@@ -127,7 +134,7 @@ class Group
         if (!$first["predicate"] instanceof Group) {
             $where = " {$this->opr} ({$where})";
         }
-        return $where;
+        return $this->built = $where;
     }
 
     /**
