@@ -205,7 +205,7 @@ abstract class BaseModel
         $this->qBuilder = $queryBuilder;
         $this->db = $db;
         $this->hooks = $hooks;
-        
+
         $this->invokeHook("init");
 
         if ($this->table === "" && $this->config["database.autoTable"]) {
