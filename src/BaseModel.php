@@ -232,8 +232,15 @@ abstract class BaseModel
      *
      * Sets the protected delimiter.
      *
+     * WARNING: this method exists only for the unit tests. Calling it outside of
+     * the unit tests will have no effect in the query builder. This method is therefor
+     * directly deprecated.
+     *
      * @param string $delim Delimiter character
      * @return self
+     *
+     * @deprecated 0.7 The method has only been added to simplify the unit test
+     * and will be removed once phpunit is swapped for Mockery.
      */
     public function setDelim(string $delim): self
     {
