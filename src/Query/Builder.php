@@ -192,7 +192,7 @@ class Builder
                 }
                 $this->params[] = $value;
                 return "?";
-            }, $data, array_keys($data)))
+            }, $data))
             . ")";
     }
 
