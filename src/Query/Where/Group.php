@@ -159,7 +159,7 @@ class Group
         $this->list[] = [
             "opr"       =>  $cOpr,
             "predicate" =>  (new Predicate)
-                ->setColumn($this->delim . $column . $this->delim)
+                ->setColumn($this->delim[0] . $column . $this->delim[1])
                 ->setValue($value)
                 ->setOperator($lOpr)
         ];
@@ -235,7 +235,7 @@ class Group
         $this->list[] = [
             "opr"       =>  $cOpr,
             "predicate" =>  (new Predicate)
-                ->setColumn($this->delim . $column . $this->delim)
+                ->setColumn($this->delim[0] . $column . $this->delim[1])
                 ->setValue($nested($builder), false, $builder->getParams())
                 ->setOperator($lOpr)
         ];

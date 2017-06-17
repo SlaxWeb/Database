@@ -68,6 +68,13 @@ abstract class BaseModel
     public $table = "";
 
     /**
+     * Object name delimiter
+     *
+     * @var string
+     */
+    protected $delim = "";
+
+    /**
      * Primary Key Column
      *
      * @var string
@@ -213,10 +220,25 @@ abstract class BaseModel
         }
         $this->setSoftDelete();
         $this->setTimestampConfig();
+        $this->setDelimiter();
 
         $this->logger->info("Model initialized successfuly", ["model" => get_class($this)]);
 
         $this->invokeHook("init", self::HOOK_AFTER);
+    }
+
+    /**
+     * Set Delim
+     *
+     * Sets the protected delimiter.
+     *
+     * @param string $delim Delimiter character
+     * @return self
+     */
+    public function setDelim(string $delim): self
+    {
+        $this->delim = strlen($delim) > 1 ? $delim : $delim . $delim;
+        return $this;
     }
 
     /**
@@ -672,6 +694,41 @@ abstract class BaseModel
                 $this->table = strtolower($this->table);
                 break;
         }
+    }
+
+    /**
+     * Set delimiter
+     *
+     * Sets the object name delimiter to the query builder and the protected property.
+     * If the 'delim' proected property is set then it is going to be used. The
+     * second location to check for a configured delimiter is in the 'delimiterOverride'
+     * configuration setting. If none are set, the default delimiter for the driver
+     * is set.
+     *
+     * @return void
+     */
+    protected function setDelimiter()
+    {
+        if ($this->delim === "") {
+            if ($this->config["database.delimiterOverride"] !== "") {
+                $this->delim = $this->config["database.delimiterOverride"];
+                if (strlen($this->delim) === 1) {
+                    $this->delim .= $this->delim;
+                }
+            } else {
+                switch ($this->config["database.connection"]["driver"]) {
+                case Database::DB_MYSQL:
+                    $this->deilm = "``";
+                    break;
+                case Database::DB_SQLSRV:
+                    $this->delim = "[]";
+                    break;
+                default:
+                    $this->delim ="\"\"";
+                }
+            }
+        }
+        $this->qBuilder->setDelim($this->delim);
     }
 
     /**

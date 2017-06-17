@@ -124,7 +124,7 @@ class Builder
      */
     public function table(string $table): self
     {
-        $this->table = $this->delim . $table . $this->delim;
+        $this->table = $this->delim[0] . $table . $this->delim[1];
         $this->predicates->table($this->table);
         return $this;
     }
@@ -183,9 +183,9 @@ class Builder
      */
     public function insert(array $data): string
     {
-        return "INSERT INTO {$this->table} ({$this->delim}"
-            . implode("{$this->delim},{$this->delim}", array_keys($data))
-            . "{$this->delim}) VALUES ("
+        return "INSERT INTO {$this->table} ({$this->delim[0]}"
+            . implode("{$this->delim[1]},{$this->delim[0]}", array_keys($data))
+            . "{$this->delim[1]}) VALUES ("
             . implode(",", array_map(function($value) {
                 if (is_array($value) && isset($value["func"])) {
                     return $value["func"];
@@ -251,7 +251,7 @@ class Builder
     {
         $query = "UPDATE {$this->table} SET "
             . implode(",", array_map(function($value, $column) {
-                $col = "{$this->table}.{$this->delim}{$column}{$this->delim} = ";
+                $col = "{$this->table}.{$this->delim[0]}{$column}{$this->delim[1]} = ";
                 if (is_array($value) && isset($value["func"])) {
                     return $col . $value["func"];
                 }
@@ -394,7 +394,7 @@ class Builder
     public function join(string $table, string $type = "INNER JOIN"): self
     {
         $this->joins[] = [
-            "table"     =>  $this->delim . $table . $this->delim,
+            "table"     =>  $this->delim[0] . $table . $this->delim[1],
             "type"      =>  $type,
             "cond"      =>  [],
             "colList"   =>  []
@@ -484,7 +484,7 @@ class Builder
      */
     public function groupBy(string $col): self
     {
-        $this->groupCols[] = $this->table . "." . $this->delim . $col . $this->delim;
+        $this->groupCols[] = $this->table . "." . $this->delim[0] . $col . $this->delim[1];
         return $this;
     }
 
@@ -500,7 +500,7 @@ class Builder
      */
     public function orderBy(string $col, string $direction = self::ORDER_ASC, string $func = ""): self
     {
-        $orderData = "{$this->table}.{$this->delim}{$col}{$this->delim}";
+        $orderData = "{$this->table}.{$this->delim[0]}{$col}{$this->delim[1]}";
         if ($func !== "") {
             $orderData = "{$func}({$orderData})";
         }
@@ -543,13 +543,13 @@ class Builder
             // create "table"."column"
             if (is_array($name)) {
                 $colList .= strtoupper($name["func"] ?? "");
-                $col = $table . "." . $this->delim . $name["col"] . $this->delim;
+                $col = $table . "." . $this->delim[0] . $name["col"] . $this->delim[1];
                 $colList .= "({$col})";
                 if (isset($name["as"])) {
                     $colList .= " AS {$name["as"]},";
                 }
             } else {
-                $name = $table . "." . $this->delim . $name . $this->delim;
+                $name = $table . "." . $this->delim[0] . $name . $this->delim[1];
                 $colList .= "{$name},";
             }
         }
@@ -583,9 +583,9 @@ class Builder
                 }
                 $joinData["statement"] .= " ON (1=1";
                 foreach ($join["cond"] as $cond) {
-                    $joinData["statement"] .= " {$cond["lOpr"]} {$this->table}.{$this->delim}"
-                        . "{$cond["primKey"]}{$this->delim} {$cond["cOpr"]} {$join["table"]}."
-                        . "{$this->delim}{$cond["forKey"]}{$this->delim}";
+                    $joinData["statement"] .= " {$cond["lOpr"]} {$this->table}.{$this->delim[0]}"
+                        . "{$cond["primKey"]}{$this->delim[1]} {$cond["cOpr"]} {$join["table"]}."
+                        . "{$this->delim[0]}{$cond["forKey"]}{$this->delim[1]}";
                 }
                 $joinData["statement"] .= ") ";
             }
