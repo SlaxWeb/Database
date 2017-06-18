@@ -4,6 +4,12 @@ Changes between versions
 
 ## v0.6
 
+### v0.6.3
+
+* register database model loader as a factory
+* fix loading models with additional parameters since the model loader has been
+moved to a regular/factory service definition
+
 ### v0.6.2
 
 * save built predicates to local protected property in Query Builder and re-use
