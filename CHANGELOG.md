@@ -4,6 +4,13 @@ Changes between versions
 
 ## v0.6
 
+### v0.6.2
+
+* save built predicates to local protected property in Query Builder and re-use
+the already built predicates on consecutive runs
+* set the database object name delimiter in the base model based on driver in use
+* override the object name delimiter in the configuration
+
 ### v0.6.1
 
 * throw an exception if an attempt to load a model without a name is made
