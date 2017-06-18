@@ -84,8 +84,8 @@ class Provider implements \Pimple\ServiceProviderInterface
             }
         );
 
-        $container["queryBuilder.service"] = function() {
+        $container["queryBuilder.service"] = $container->factory(function() {
             return new \SlaxWeb\Database\Query\Builder;
-        };
+        });
     }
 }

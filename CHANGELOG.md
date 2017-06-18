@@ -4,6 +4,10 @@ Changes between versions
 
 ## v0.6
 
+### v0.6.4
+
+* register the query builder as a factory
+
 ### v0.6.3
 
 * register database model loader as a factory
