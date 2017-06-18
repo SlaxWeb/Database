@@ -44,8 +44,9 @@ class Provider implements \Pimple\ServiceProviderInterface
         $container["loadDBModel.service"] = $container->protect(
             function(string $model) use ($container) {
                 $container["__loadingModelName"] = $model;
+                $container["__loadingModelParams"] = func_get_args();
                 $model = $container["dbModelLoader.service"];
-                $container["__loadingModelName"] = null;
+                unset($container["__loadingModelName"], $container["__loadingModelParams"]);
                 return $model;
             }
         );
@@ -74,7 +75,7 @@ class Provider implements \Pimple\ServiceProviderInterface
                 );
 
                 if (method_exists($model, "init")) {
-                    $args = func_get_args();
+                    $args = $container["__loadingModelParams"];
                     array_shift($args);
                     $model->init(...$args);
                 }
