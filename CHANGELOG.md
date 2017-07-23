@@ -9,6 +9,8 @@ Changes between versions
 * throw exception if neither column nor function are set in orderBy
 * construct the group by and order by statements when the select statement is being
 built, since the table may not yet have been set to the query builder
+* throw QueryBuilderException in insert/select/update/delete methods if table has
+not been set
 
 ### v0.6.4
 

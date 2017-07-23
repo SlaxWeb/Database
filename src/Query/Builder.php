@@ -177,13 +177,22 @@ class Builder
      *
      * Create the insert query based on the array of data. It prepares the query
      * for parameter binding, and stores the parameter values in the local parameters
-     * property which can be retrieved with 'getParams' method call.
+     * property which can be retrieved with 'getParams' method call. Throws an exception
+     * if the table name has not been set prior to calling this method.
      *
      * @param array $data Data to be inserted
      * @return string
+     *
+     * @throws \SlaxWeb\Database\Exception\QueryBuilderException
      */
     public function insert(array $data): string
     {
+        if ($this->table === "") {
+            throw new QueryBuilderException(
+                "No table name has been set, can not construct SQL statement!"
+            );
+        }
+
         return "INSERT INTO {$this->table} ({$this->delim[0]}"
             . implode("{$this->delim[1]},{$this->delim[0]}", array_keys($data))
             . "{$this->delim[1]}) VALUES ("
@@ -206,13 +215,22 @@ class Builder
      * item is another array, it needs to hold the "func" and "col" keys at least,
      * defining the SQL DML function, as well as the column name. A third item with
      * the key name "as" can be added, and this name will be used in the "AS" statement
-     * in the SQL DML for that column.
+     * in the SQL DML for that column. Throws an exception if the table name has
+     * not been set prior to calling this method.
      *
      * @param array $cols Column definitions
      * @return string
+     *
+     * @throws \SlaxWeb\Database\Exception\QueryBuilderException
      */
     public function select(array $cols): string
     {
+        if ($this->table === "") {
+            throw new QueryBuilderException(
+                "No table name has been set, can not construct SQL statement!"
+            );
+        }
+
         $query = "SELECT " . $this->buildColList($cols, $this->table);
 
         // create join statements
@@ -238,13 +256,22 @@ class Builder
      *
      * Create the update statement with the where predicates. As input it takes an
      * array of columns as array item keys and their new values as the array item
-     * values.
+     * values. Throws an exception if the table name has not been set prior to calling
+     * this method.
      *
      * @param array $cols Array of column names and their new values
      * @return string
+     *
+     * @throws \SlaxWeb\Database\Exception\QueryBuilderException
      */
     public function update(array $cols): string
     {
+        if ($this->table === "") {
+            throw new QueryBuilderException(
+                "No table name has been set, can not construct SQL statement!"
+            );
+        }
+
         $query = "UPDATE {$this->table} SET "
             . implode(",", array_map(function($value, $column) {
                 $col = "{$this->table}.{$this->delim[0]}{$column}{$this->delim[1]} = ";
@@ -263,12 +290,21 @@ class Builder
     /**
      * Delete
      *
-     * Create delete statement with the where predicates.
+     * Create delete statement with the where predicates. Throws an exception if
+     * the table name has not been set prior to calling this method.
      *
      * @return string
+     *
+     * @throws \SlaxWeb\Database\Exception\QueryBuilderException
      */
     public function delete(): string
     {
+        if ($this->table === "") {
+            throw new QueryBuilderException(
+                "No table name has been set, can not construct SQL statement!"
+            );
+        }
+
         $query = "DELETE FROM {$this->table} WHERE 1=1" . $this->predicates->convert();
         $this->params = $this->predicates->getParams();
         return $query;
