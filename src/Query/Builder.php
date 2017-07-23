@@ -414,7 +414,7 @@ class Builder
      * @param string $lOpr Logical operator for multiple JOIN conditions
      * @return self
      *
-     * @exceptions \SlaxWeb\Database\Exception\NoJoinTableException
+     * @throws \SlaxWeb\Database\Exception\NoJoinTableException
      */
     public function joinCond(string $primKey, string $forKey, string $cOpr = Predicate::OPR_EQUAL, $lOpr = "AND"): self
     {
@@ -459,7 +459,7 @@ class Builder
      * @param array $cols Column list
      * @return self
      *
-     * @exceptions \SlaxWeb\Database\Exception\NoJoinTableException
+     * @throws \SlaxWeb\Database\Exception\NoJoinTableException
      */
     public function joinCols(array $cols): self
     {
@@ -565,6 +565,8 @@ class Builder
      * separated list of columns to be included in the SELECT statement.
      *
      * @return array
+     *
+     * @throws \SlaxWeb\Database\Exception\NoJoinConditionException
      */
     protected function getJoinData(): array
     {
