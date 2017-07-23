@@ -11,6 +11,7 @@ Changes between versions
 built, since the table may not yet have been set to the query builder
 * throw QueryBuilderException in insert/select/update/delete methods if table has
 not been set
+* fix a bug in the 'delim' property name in the base model
 
 ### v0.6.4
 

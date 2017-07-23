@@ -725,7 +725,7 @@ abstract class BaseModel
             } else {
                 switch ($this->config["database.connection"]["driver"]) {
                 case Database::DB_MYSQL:
-                    $this->deilm = "``";
+                    $this->delim = "``";
                     break;
                 case Database::DB_SQLSRV:
                     $this->delim = "[]";
