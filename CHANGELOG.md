@@ -4,6 +4,10 @@ Changes between versions
 
 ## v0.6
 
+### v0.6.6
+
+* fix bug in the 'ColumnNotFoundException' class name
+
 ### v0.6.5
 
 * throw exception if neither column nor function are set in orderBy

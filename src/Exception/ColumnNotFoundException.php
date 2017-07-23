@@ -14,6 +14,6 @@
  */
 namespace SlaxWeb\Database\Exception;
 
-class ColumnNotFoundErrorException extends \Exception
+class ColumnNotFoundException extends \Exception
 {
 }
