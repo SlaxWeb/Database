@@ -3,6 +3,7 @@ namespace SlaxWeb\Database\Query;
 
 use SlaxWeb\Database\Query\Where\Group;
 use SlaxWeb\Database\Query\Where\Predicate;
+use Slaxweb\Database\Exception\QueryBuilderException;
 
 /**
  * Query Builder
@@ -497,9 +498,18 @@ class Builder
      * @param string $direction Direction of order, default self::ORDER_ASC
      * @param string $func SQL function to use ontop of the column, default string("")
      * @return self
+     *
+     * @throws \SlaxWeb\Database\Exception\QueryBuilderException
      */
     public function orderBy(string $col, string $direction = self::ORDER_ASC, string $func = ""): self
     {
+        if ($col === "" && $func === "") {
+            throw new QueryBuilderException(
+                "Either the column or the function parameters need to be set for"
+                . " 'orderBy'."
+            );
+        }
+
         $orderData = "{$this->table}.{$this->delim[0]}{$col}{$this->delim[1]}";
         if ($func !== "") {
             $orderData = "{$func}({$orderData})";

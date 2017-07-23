@@ -4,6 +4,10 @@ Changes between versions
 
 ## v0.6
 
+### v0.6.5
+
+* throw exception if neither column nor function are set in orderBy
+
 ### v0.6.4
 
 * register the query builder as a factory
