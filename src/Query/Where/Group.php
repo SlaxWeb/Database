@@ -115,7 +115,7 @@ class Group
      */
     public function convert(string $table = ""): string
     {
-        if ($this->built !== "" || count($this->list) < 1){
+        if ($this->built !== "" || count($this->list) < 1) {
             return $this->built;
         }
 

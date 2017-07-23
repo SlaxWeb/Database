@@ -731,7 +731,7 @@ abstract class BaseModel
                     $this->delim = "[]";
                     break;
                 default:
-                    $this->delim ="\"\"";
+                    $this->delim = "\"\"";
                 }
             }
         }
