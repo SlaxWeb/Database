@@ -417,7 +417,7 @@ abstract class BaseModel
      * object as its input parameter. Additional where predicates must be added
      * to the builder through this object.
      *
-     * @param Closure $predicates Grouped predicates definition closure
+     * @param \Closure $predicates Grouped predicates definition closure
      * @return self
      */
     public function groupWhere(\Closure $predicates): self
@@ -432,7 +432,7 @@ abstract class BaseModel
      * Works the same way as 'Grouped Where predicates' method, except it adds the
      * predicate group to the list with the "OR" comparison operator.
      *
-     * @param Closure $predicates Grouped predicates definition closure
+     * @param \Closure $predicates Grouped predicates definition closure
      * @return self
      */
     public function orGroupWhere(\Closure $predicates): self
@@ -447,7 +447,7 @@ abstract class BaseModel
      * Add a nested select as a value to the where predicate.
      *
      * @param string $column Column name
-     * @param closure $nested Nested builder
+     * @param \Closure $nested Nested builder
      * @param string $lOpr Logical operator, default string("IN")
      * @return self
      */
@@ -467,7 +467,7 @@ abstract class BaseModel
      * select predicate with an "OR" comparisson operator instead of an "AND".
      *
      * @param string $column Column name
-     * @param closure $nested Nested builder
+     * @param \Closure $nested Nested builder
      * @param string $lOpr Logical operator, default string("IN")
      * @return self
      */
