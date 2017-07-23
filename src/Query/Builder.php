@@ -227,9 +227,7 @@ class Builder
             $query .= " GROUP BY " . implode(",", $this->groupCols);
         }
 
-        if ($this->orderCols !== []) {
-            $query .= " ORDER BY " . implode(",", $this->orderCols);
-        }
+        $query .= $this->getOrderBy();
 
         if ($this->limit > 0) {
             $query .= " LIMIT {$this->limit}" . ($this->offset > 0 ? " OFFSET {$this->offset}" : "");
@@ -510,11 +508,11 @@ class Builder
             );
         }
 
-        $orderData = "{$this->table}.{$this->delim[0]}{$col}{$this->delim[1]}";
-        if ($func !== "") {
-            $orderData = "{$func}({$orderData})";
-        }
-        $this->orderCols[] = "{$orderData} {$direction}";
+        $this->orderCols[] = [
+            "col"       =>  $col,
+            "direction" =>  $direction,
+            "func"      =>  $func
+        ];
         return $this;
     }
 
@@ -606,5 +604,26 @@ class Builder
             $joinData["colList"] .= $this->buildColList($join["colList"], $join["table"]);
         }
         return $joinData;
+    }
+
+    /**
+     * Get Order By Statement
+     *
+     * Construct the order by statement if any data has been added to the order
+     * by internal property by the 'orderBy' method.
+     *
+     * @return string
+     */
+    protected function getOrderBy(): string
+    {
+        $orderBy = "";
+        foreach ($this->orderCols as $data) {
+            $orderData = "{$this->table}.{$this->delim[0]}{$data["col"]}{$this->delim[1]}";
+            if ($data["func"] !== "") {
+                $orderData = "{$data["func"]}({$orderData})";
+            }
+            $orderBy .= "{$orderData} {$data["direction"]},";
+        }
+        return $orderBy !== "" ? " ORDER BY " . rtrim($orderBy, ",") : "";
     }
 }

@@ -7,6 +7,7 @@ Changes between versions
 ### v0.6.5
 
 * throw exception if neither column nor function are set in orderBy
+* construct the order by statement when the select statement is being built
 
 ### v0.6.4
 
