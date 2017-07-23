@@ -223,10 +223,7 @@ class Builder
         $query .= " FROM {$this->table} {$join["statement"]}WHERE 1=1" . $this->predicates->convert();
         $this->params = $this->predicates->getParams();
 
-        if ($this->groupCols !== []) {
-            $query .= " GROUP BY " . implode(",", $this->groupCols);
-        }
-
+        $query .= $this->getGroupBy();
         $query .= $this->getOrderBy();
 
         if ($this->limit > 0) {
@@ -483,7 +480,7 @@ class Builder
      */
     public function groupBy(string $col): self
     {
-        $this->groupCols[] = $this->table . "." . $this->delim[0] . $col . $this->delim[1];
+        $this->groupCols[] = $col;
         return $this;
     }
 
@@ -604,6 +601,23 @@ class Builder
             $joinData["colList"] .= $this->buildColList($join["colList"], $join["table"]);
         }
         return $joinData;
+    }
+
+    /**
+     * Get Group By Statement
+     *
+     * Construct the group by statement if any data has been added to the group
+     * by internal property by the 'groupBy' method.
+     *
+     * @return string
+     */
+    protected function getGroupBy(): string
+    {
+        $groupBy = "";
+        foreach ($this->groupCols as $col) {
+            $groupBy .= $this->table . "." . $this->delim[0] . $col . $this->delim[1] . ",";
+        }
+        return $groupBy !== "" ? " GROUP BY " . rtrim($groupBy, ",") : "";
     }
 
     /**
