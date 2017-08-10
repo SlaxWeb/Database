@@ -14,7 +14,7 @@
     ],
     "subcomponents": {
         "list": {
-            "database-pdo": "~0.6"
+            "database-pdo": "dev-feature/migrations"
         },
         "required": true,
         "multi": false
